@@ -80,8 +80,15 @@ function save (state) {
 }
 
 function loadLocal (context) {
-  let local = JSON.parse(localStorage.getItem('vlog'))
-  context.commit('update', local)
+  let data = localStorage.getItem('vlog')
+  if (data) {
+    try {
+      let local = JSON.parse(data)
+      context.commit('update', local)
+    } catch (e) {
+      log.error(`fail to parse local data: ${data}`)
+    }
+  }
 }
 
 function loadRemote (context) {
