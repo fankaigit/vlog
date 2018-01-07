@@ -29,10 +29,6 @@
         </div>
       </div>
     </section>
-
-    <section style="margin-top: 10%">
-      <router-link to="/habits" class="button is-large is-primary">编辑活动</router-link>
-    </section>
   </div>
 </template>
 
