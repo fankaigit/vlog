@@ -1,0 +1,5 @@
+// fill the config values and rename this file to conf.js
+export default {
+  // urlForRecords: ,
+  // urlForHabits:
+}
