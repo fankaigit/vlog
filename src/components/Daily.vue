@@ -101,6 +101,7 @@
     display: table;
     width: 100%;
     margin-top: 0.5rem;
+    margin-bottom: 3rem;
   }
 
   .habit {
