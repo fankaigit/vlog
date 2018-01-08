@@ -1,9 +1,7 @@
 <template>
   <div>
     <section id="header" class="hero is-info is-small">
-      <div class="hero-body">
-        <p class="title">{{ habit.id > 0 ? '编辑' : '新建'}}活动</p>
-      </div>
+      <p class="title">{{ habit.id > 0 ? '编辑' : '新建'}}活动</p>
     </section>
 
     <section id="form">

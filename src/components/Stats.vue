@@ -1,9 +1,7 @@
 <template>
   <div>
     <section id="header" class="hero is-info is-small">
-      <div class="hero-body">
-        <p class="title">数据统计</p>
-      </div>
+      <p class="title">数据统计</p>
     </section>
     <i class="fa fa-bar-chart fa-5x"/>
   </div>

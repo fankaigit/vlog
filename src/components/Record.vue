@@ -1,23 +1,18 @@
 <template>
-  <div class="columns is-mobile">
+  <div class="record columns is-mobile">
     <div class="slider-column column is-7">
       <input class="slider" :id="habit.name + t" type="range"
              :min="habit.min" :max="habit.max" :value="v"
              :step="habit.step"  @change="saveRecord(habit.id, t)"/>
     </div>
 
-    <div class="column is-5">
-       <span v-if="habit.values != undefined && habit.values.length > 0">
-                      {{habit.values[Math.round(v)]}}
-                    </span>
-      <span v-else>
-                       {{Math.round(v)}}
-                      <span v-if="habit.unit !== ''">
-                        {{habit.unit}}
-                      </span>
-                    </span>
+    <div class="txt-column column is-5">
+      <div class="txt" v-if="habit.values.length > 0">{{habit.values[v]}}</div>
+      <div v-else>
+        <span class="value">{{v}}</span>
+        <span class="unit" v-if="habit.unit !== ''">{{habit.unit}}</span>
+      </div>
     </div>
-
   </div>
 </template>
 
@@ -45,22 +40,40 @@
 </script>
 
 <style scoped>
+
+  .txt-column {
+    line-height: 1.4em;
+  }
+
+  .txt-column .value {
+    font-size: 0.9em;
+    margin-left: 1em;
+  }
+
+  .txt-column .unit {
+    font-size: 0.6em;
+  }
+
+  .txt-column .txt {
+    font-size: 0.7em;
+    margin-left: 1em;
+  }
+
   .column {
     margin: 0;
-    padding: 0em 0.1em;
+    padding: 0;
     overflow: hidden;
   }
 
   .slider {
     margin: 0;
-    padding: 0em 0.2em;
+    padding: 0 0.5em;
   }
 
   input[type='range'] {
     width: 100%;
-    height: 20px;
+    height: 100%;
     overflow: hidden;
-    cursor: pointer;
   }
 
   input[type='range'],
@@ -70,29 +83,18 @@
   }
 
   input[type='range']::-webkit-slider-runnable-track {
-    /*width: 45%;*/
-    height: 10px;
-    background: #AAA;
+    height: 0.3em;
+    background: lightgrey;
   }
 
   input[type='range']::-webkit-slider-thumb {
     position: relative;
-    height: 30px;
-    width: 30px;
-    margin-top: -10px;
-    background: steelblue;
+    height: 2em;
+    width: 2em;
+    margin-top: -0.9em;
+    background: skyblue;
     border-radius: 50%;
-    border: 2px solid white;
-  }
-
-  input[type='range']::-webkit-slider-thumb::before {
-    position: absolute;
-    content: '';
-    height: 10px; /* equal to height of runnable track */
-    width: 500px; /* make this bigger than the widest range input element */
-    left: -502px; /* this should be -2px - width */
-    top: 8px; /* don't change this */
-    background: #777;
+    border: 0.1em solid white;
   }
 
 </style>

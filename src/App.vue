@@ -2,18 +2,21 @@
   <div id="app">
     <router-view/>
 
-    <div id="nav" class="navbar is-fixed-bottom bd-notification is-dark">
+    <div id="nav" class="navbar is-fixed-bottom bd-notification">
       <div>
-        <router-link to="/daily">记录</router-link>
-        <i class="fa fa-book"/>
+        <router-link to="/daily">
+          <i class="fa fa-book"/>
+        </router-link>
       </div>
       <div>
-        <router-link to="/habits">活动</router-link>
-        <i class="fa fa-list"/>
+        <router-link to="/habits">
+          <i class="fa fa-list"/>
+        </router-link>
       </div>
       <div>
-        <router-link to="/stats">统计</router-link>
-        <i class="fa fa-bar-chart"/>
+        <router-link to="/stats">
+          <i class="fa fa-bar-chart"/>
+        </router-link>
       </div>
     </div>
   </div>
@@ -30,19 +33,24 @@
     margin: 0px;
     border-width: 0px;
     padding: 0px;
-    font-size: 1.5rem;
   }
 
   #app {
   }
 
+  .hero {
+    height: 4rem;
+  }
+
   .hero .title, .subtitle {
     text-align: center;
+    padding-top: 0.9rem;
   }
 
   #nav {
     display: flex;
-    min-height: 1.8em;
+    min-height: 2rem;
+    border-top: 1px solid whitesmoke;
   }
 
   #nav div {
@@ -51,9 +59,13 @@
   }
 
   #nav a {
-    color: white;
+    color: gray;
     font-weight: bold;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
+  }
+
+  #nav a.router-link-active {
+    color: #209cee;
   }
 
 </style>

@@ -1,10 +1,7 @@
 <template>
   <div>
     <section id="header" class="hero is-info is-small">
-      <div class="hero-body">
-        <!--<h2 class="title">活动日志</h2>-->
-        <p class="title">{{DateUtils.formatDate(Date.now())}}</p>
-      </div>
+      <p class="title">{{DateUtils.formatDate(Date.now())}}</p>
     </section>
 
     <section id="records">
@@ -71,7 +68,6 @@
           this.$store.commit('initHabitRecords', hid)
         }
       }
-//      log.info('habits:', JSON.stringify(this.habits))
     },
     computed: {
       records: function () {
@@ -104,6 +100,7 @@
   #records {
     display: table;
     width: 100%;
+    margin-top: 0.5rem;
   }
 
   .habit {
@@ -113,16 +110,16 @@
   .habit-name {
     display: table-cell;
     width: 30%;
-    border-bottom: 0.2em solid lightblue;
-    /*background-color: lightgreen;*/
+    border-bottom: 1px solid lightblue;
     vertical-align: middle;
     text-align: center;
-    font-weight: bold;
+    font-size: 1.4rem;
   }
 
   .habit-records {
     display: table-cell;
-    border-bottom: 0.2em solid lightblue;
+    border-bottom: 1px solid lightblue;
+    font-size: 1.5rem;
   }
 
   .habit-records * {
@@ -130,10 +127,9 @@
     margin: 0;
   }
 
-  .habit-record {
-    /*display: inline-block;*/
-    border-bottom: 1px solid lightblue;
-    /*height: 2em;*/
+  .habit-record:not(:last-child) {
+    border-bottom: 1px solid whitesmoke;
+    margin-bottom: 0.1rem;
   }
 
   .habit-record .action {
@@ -141,10 +137,10 @@
   }
 
   .fa-minus-circle {
-    color: red;
+    color: tomato;
   }
 
   .fa-plus-circle {
-    color: green;
+    color: lightseagreen;
   }
 </style>

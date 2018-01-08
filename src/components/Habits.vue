@@ -1,9 +1,7 @@
 <template>
   <div>
     <section id="header" class="hero is-info is-small">
-      <div class="hero-body">
-        <p class="title">我的活动</p>
-      </div>
+      <p class="title">我的活动</p>
     </section>
 
     <div id="habits">
