@@ -4,6 +4,7 @@ import Daily from '@/components/Daily'
 import Habits from '@/components/Habits'
 import Habit from '@/components/Habit'
 import Stats from '@/components/Stats'
+import User from '@/components/User'
 
 Vue.use(Router)
 
@@ -32,7 +33,11 @@ export default new Router({
       path: '/habits/:hid',
       name: 'habit',
       component: Habit
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: User
     }
-
   ]
 })

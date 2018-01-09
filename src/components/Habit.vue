@@ -121,7 +121,7 @@
     created: function () {
       this.$store.dispatch('init')
       let hid = this.$route.params.hid
-      this.habit = this.$store.state.habits[hid] || JSON.parse(JSON.stringify(template))
+      this.habit = this.$store.state.data.habits[hid] || JSON.parse(JSON.stringify(template))
       this.hvalues = this.habit.values.join(' ')
     },
     beforeDestroy: function () {

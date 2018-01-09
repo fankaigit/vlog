@@ -1,5 +1,11 @@
-// fill the config values and rename this file to conf.js
+// fill host value and rename this file to conf.js
+const HOST='http://localhost'
 export default {
-  // urlForRecords: ,
-  // urlForHabits:
+   urls: {
+      data: `${HOST}/s/vlog/data/1`,
+      login: `${HOST}/s/login`,
+      logout: `${HOST}/s/logout`,
+      register: `${HOST}/s/register`,
+      status: `${HOST}/s/status`
+   }
 }

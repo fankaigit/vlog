@@ -72,7 +72,7 @@
     computed: {
       habits: function () {
         log.info('recalculate habits', JSON.stringify(this.$store.state))
-        return this.$store.state.habits
+        return this.$store.state.data.habits
       }
     }
   }

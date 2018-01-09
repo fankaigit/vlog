@@ -4,66 +4,101 @@ import log from '../utils/log'
 import axios from 'axios'
 import appConfig from '../../conf'
 
-const url = appConfig.url
-
 Vue.use(Vuex)
 
 const state = {
-  habits: {},
-  records: {},
-  updatedTime: -1
+  data: {
+    habits: {},
+    records: {},
+    updatedTime: -1
+  },
+  inited: false,
+  user: null
 }
 
 const mutations = {
   saveHabit: function (state, h) {
-    Vue.set(state.habits, h.id, h)
-    state.updatedTime = Date.now()
+    Vue.set(state.data.habits, h.id, h)
+    state.data.updatedTime = Date.now()
     if (h.deleted === true) {
-      let rs = state.records[h.id] || {}
+      let rs = state.data.records[h.id] || {}
       if (Object.keys(rs).length === 0) {
         log.info('clear habit', JSON.stringify(h))
-        delete state.habits[h.id]
-        delete state.records[h.id]
+        delete state.data.habits[h.id]
+        delete state.data.records[h.id]
       }
     }
     save(state)
   },
   initHabitRecords: function (state, hid) {
-    Vue.set(state.records, hid, {})
+    Vue.set(state.data.records, hid, {})
     save(state)
   },
   saveRecord: function (state, record) {
-    Vue.set(state.records[record.hid], record.key, record.value)
+    Vue.set(state.data.records[record.hid], record.key, record.value)
     save(state)
   },
   delRecord: function (state, record) {
-    Vue.delete(state.records[record.hid], record.key)
+    Vue.delete(state.data.records[record.hid], record.key)
     save(state)
   },
   update: function (state, source) {
-    if (source !== null && source.updatedTime > state.updatedTime) {
-      Vue.set(state, 'habits', source.habits || {})
-      state.records = source.records || {}
-      state.updatedTime = source.updatedTime
-      log.info('updated state:', JSON.stringify(state))
+    if (source !== null && source.updatedTime > state.data.updatedTime) {
+      Vue.set(state.data, 'habits', source.habits || {})
+      Vue.set(state.data, 'records', source.records || {})
+      state.data.updatedTime = source.updatedTime
+      log.info('updated data:', JSON.stringify(state.data))
     } else {
-      log.info('skip update state')
+      log.info('skip update data')
     }
   }
 }
 
 const getters = {
+  loggedIn: function (state) {
+    return state.user !== null
+  }
 }
 
 const actions = {
   init: function (context) {
-    if (context.state.updatedTime === -1) {
+    if (!context.state.inited) {
       log.info('init data')
       loadLocal(context)
-      loadRemote(context)
+      context.state.inited = true
+      checkLogin(context)
     } else {
       log.info('skip init data')
     }
+  },
+  register: function (context, data) {
+    log.info('register')
+    const url = appConfig.urls.register
+    axios.post(url, data).then(
+      (response) => onLoggedIn(context, response),
+      (err) => onNotLoggedIn(context, err)
+    )
+  },
+  login: function (context, data) {
+    log.info('login')
+    const url = appConfig.urls.login
+    axios.post(url, data).then(
+      (response) => onLoggedIn(context, response),
+      (err) => onNotLoggedIn(context, err)
+    )
+  },
+  logout: function (context) {
+    log.info('logout')
+    context.state.loggedIn = false
+    context.state.user = null
+    localStorage.clear()
+    const url = appConfig.urls.logout
+    axios.post(url).then(
+      (response) => {
+        log.info('fail to logged out:', response.data)
+      },
+      (err) => onNotLoggedIn(context, err)
+    )
   }
 }
 
@@ -73,6 +108,30 @@ export default new Vuex.Store({
   getters,
   actions
 })
+
+function onLoggedIn (context, response) {
+  log.info('login status:', response.data)
+  context.state.loggedIn = true
+  context.state.user = response.data
+  loadRemote(context)
+}
+
+function onNotLoggedIn (context, err) {
+  if (err.response.status === 401) {
+    log.info('not logged in')
+    context.state.loggedIn = false
+    context.state.user = null
+  } else {
+    log.error('fail to connect to server:', err)
+  }
+}
+
+function checkLogin (context) {
+  axios.get(appConfig.urls.status).then(
+    (response) => onLoggedIn(context, response),
+    (err) => onNotLoggedIn(context, err)
+  )
+}
 
 function save (state) {
   saveLocal(state)
@@ -89,13 +148,15 @@ function loadLocal (context) {
       log.error(`fail to parse local data: ${data}`)
     }
   }
+  log.info('loaded local data')
 }
 
 function loadRemote (context) {
+  const url = appConfig.urls.data
   axios.get(url).then(
       (response) => {
-        log.info('remote = ', JSON.stringify(response.data))
-        if (response.data.updatedTime > state.updatedTime) {
+        log.info('get remote = ', JSON.stringify(response.data))
+        if (response.data.updatedTime > context.state.data.updatedTime) {
           log.info('use remote data')
           context.commit('update', response.data)
           saveLocal()
@@ -108,12 +169,17 @@ function loadRemote (context) {
 }
 
 function saveLocal (state) {
-  localStorage.setItem('vlog', JSON.stringify(state))
-  log.info('saved to local:', JSON.stringify(state))
+  localStorage.setItem('vlog', JSON.stringify(state.data))
+  log.info('saved to local:', JSON.stringify(state.data))
 }
 
 function saveRemote (state) {
-  axios.post(url, state).then(
+  if (!state.loggedIn) {
+    log.info('not logged in, skip')
+    return
+  }
+  const url = appConfig.urls.data
+  axios.post(url, state.data).then(
       (response) => {
         log.info('saved to remote')
       },

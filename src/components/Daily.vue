@@ -72,7 +72,7 @@
     computed: {
       records: function () {
         let ret = {}
-        let records = this.$store.state.records
+        let records = this.$store.state.data.records
         for (let hid in records) {
           let vs = records[hid]
           let nv = {}
@@ -85,11 +85,11 @@
             ret[hid] = nv
           }
         }
-        log.info('records:', ret)
+        log.info('display records:', ret)
         return ret
       },
       habits: function () {
-        return this.$store.state.habits
+        return this.$store.state.data.habits
       }
     }
   }
