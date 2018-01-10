@@ -89,9 +89,7 @@ const actions = {
   },
   logout: function (context) {
     log.info('logout')
-    context.state.loggedIn = false
-    context.state.user = null
-    localStorage.clear()
+    clear(context)
     const url = appConfig.urls.logout
     axios.post(url).then(
       (response) => {
@@ -108,6 +106,17 @@ export default new Vuex.Store({
   getters,
   actions
 })
+
+function clear (context) {
+  context.state.loggedIn = false
+  context.state.user = null
+  context.state.data = {
+    habits: {},
+    records: {},
+    updatedTime: -1
+  }
+  localStorage.clear()
+}
 
 function onLoggedIn (context, response) {
   log.info('login status:', response.data)
