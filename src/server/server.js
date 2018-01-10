@@ -4,7 +4,6 @@ const app = new Koa()
 
 // logger
 app.use(async (ctx, next) => {
-  log.info(`start`)
   const start = Date.now()
   await next()
   const ms = Date.now() - start
@@ -25,13 +24,12 @@ app.use(koaBody({
 
 // auth
 const session = require('koa-session')
-const passport = require('koa-passport')
 app.keys = ['your-session-secret']
 app.use(session({}, app))
-app.use(passport.initialize())
-app.use(passport.session())
 
 const auth = require('./auth')
+app.use(auth.pass.initialize())
+app.use(auth.pass.session())
 app.use(auth.pub.routes())
 app.use(auth.guard)
 

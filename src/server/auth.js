@@ -5,14 +5,13 @@ const Router = require('koa-router')
 
 // koa passport
 passport.serializeUser(function (user, done) {
-  log.info('se', user)
+  log.info('serialize user:', user)
   done(null, user.id)
 })
 
 passport.deserializeUser(async function (id, done) {
-  log.info('id=', id)
+  log.info('deserialize userId:', id)
   var user = users[id]
-  log.info('de', user)
   if (user) {
     done(null, user)
   } else {
@@ -21,12 +20,12 @@ passport.deserializeUser(async function (id, done) {
 })
 
 passport.use(new LocalStrategy(function(username, password, done) {
-  log.info('LocalStrategy', username, password)
   for (let u of users) {
     if (u.username === username && u.password === password) {
-      log.info('pass:', u)
+      log.info('matched:', u)
       done(null, u)
     }
+    log.info('not matched:', username, password)
     done(null, false)
   }
 }))
@@ -46,11 +45,10 @@ pub.post('/s/logout', function (ctx) {
     failureRedirect: '/s/status'
   })
 ).post('/s/register', async (ctx) => {
-  log.info(JSON.stringify(ctx.request.body))
+  log.info('register:', JSON.stringify(ctx.request.body))
   let u = ctx.request.body
   u.id = users.length
   users.push(u)
-  log.info(JSON.stringify(users))
   ctx.login(u)
   ctx.redirect('/s/status')
 }).get('/s/status', async (ctx) => {
@@ -73,5 +71,6 @@ async function guard (ctx, next) {
 
 module.exports = {
   pub: pub,
-  guard: guard
+  guard: guard,
+  pass: passport
 }
