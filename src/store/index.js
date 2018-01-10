@@ -159,7 +159,7 @@ function loadRemote (context) {
         if (response.data.updatedTime > context.state.data.updatedTime) {
           log.info('use remote data')
           context.commit('update', response.data)
-          saveLocal()
+          saveLocal(context.state)
         }
       },
       (err) => {
