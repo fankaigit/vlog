@@ -2,7 +2,7 @@ const HOST=`${window.location.protocol}//${window.location.hostname}:${location.
 
 export default {
   urls: {
-    data: `${HOST}/s/vlog/data/1`,
+    data: `${HOST}/s/vlog/data`,
     login: `${HOST}/s/login`,
     logout: `${HOST}/s/logout`,
     register: `${HOST}/s/register`,

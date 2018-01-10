@@ -152,7 +152,7 @@ function loadLocal (context) {
 }
 
 function loadRemote (context) {
-  const url = appConfig.urls.data
+  const url = `${appConfig.urls.data}/${context.state.user.uid}`
   axios.get(url).then(
       (response) => {
         log.info('get remote = ', JSON.stringify(response.data))
@@ -178,7 +178,7 @@ function saveRemote (state) {
     log.info('not logged in, skip')
     return
   }
-  const url = appConfig.urls.data
+  const url = `${appConfig.urls.data}/${state.user.uid}`
   axios.post(url, state.data).then(
       (response) => {
         log.info('saved to remote')
