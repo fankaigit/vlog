@@ -38,22 +38,24 @@
 
     </section>
 
-    <section id="actions">
+    <section id="actions" style="text-align: center">
       <span class="button is-success is-large" @click="save()">保存</span>
       <span class="button is-warning is-large" @click="cancel()">返回</span>
     </section>
 
-    <div style="margin-top: 10%">
-      <router-link to="/daily">daily</router-link>
-    </div>
   </div>
 
 </template>
 
 <style scoped>
 
+  #header {
+    margin-bottom: 2em;
+  }
+
   #form {
     display: table;
+    font-size: 1.3em;
   }
 
   #form .field {
@@ -63,12 +65,17 @@
   #form label {
     display: table-cell;
     min-width: 5em;
-    font-size: 90%;
-    padding: 0.2em 0.5em;
+    padding: 0.5em 1.5em 0.5em 1.5em;
   }
 
   #form input {
     display: table-cell;
+    background-color: whitesmoke;
+    font-size: 1em;
+  }
+
+  #actions .button {
+    margin: 1.5em;
   }
 
 </style>
