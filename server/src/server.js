@@ -1,4 +1,4 @@
-const log = require('../utils/log.js')
+const log = require('../src/utils/log.js')
 const Koa = require('koa')
 const app = new Koa()
 

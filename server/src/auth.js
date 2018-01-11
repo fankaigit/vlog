@@ -1,6 +1,6 @@
 const passport = require('koa-passport')
 const LocalStrategy = require('passport-local').Strategy
-const log = require('../utils/log.js')
+const log = require('../src/utils/log.js')
 const Router = require('koa-router')
 
 // koa passport
