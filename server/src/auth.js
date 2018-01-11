@@ -1,7 +1,8 @@
 const passport = require('koa-passport')
 const LocalStrategy = require('passport-local').Strategy
-const log = require('../src/utils/log.js')
+const log = require('../../src/utils/log.js')
 const Router = require('koa-router')
+const store = require('./store')
 
 // koa passport
 passport.serializeUser(function (user, done) {
@@ -11,7 +12,8 @@ passport.serializeUser(function (user, done) {
 
 passport.deserializeUser(async function (id, done) {
   log.info('deserialize userId:', id)
-  var user = users[id]
+  // FIXME
+  let user = await store.getUser(id)
   if (user) {
     done(null, user)
   } else {
