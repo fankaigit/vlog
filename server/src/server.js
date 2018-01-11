@@ -24,12 +24,12 @@ app.use(koaBody({
 
 // auth
 const session = require('koa-session')
-app.keys = ['your-session-secret']
+app.keys = ['yet-to-set-a-better-secret']
 app.use(session({}, app))
 
 const auth = require('./auth')
-app.use(auth.pass.initialize())
-app.use(auth.pass.session())
+app.use(auth.passport.initialize())
+app.use(auth.passport.session())
 app.use(auth.pub.routes())
 app.use(auth.guard)
 

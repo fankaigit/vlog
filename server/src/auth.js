@@ -1,19 +1,16 @@
-const passport = require('koa-passport')
-const LocalStrategy = require('passport-local').Strategy
 const log = require('../../src/utils/log.js')
-const Router = require('koa-router')
-const store = require('./store')
+const userStore = require('./userStore')
 
 // koa passport
+const passport = require('koa-passport')
 passport.serializeUser(function (user, done) {
-  log.info('serialize user:', user)
+  log.info('serialize user:', user.id)
   done(null, user.id)
 })
 
 passport.deserializeUser(async function (id, done) {
-  log.info('deserialize userId:', id)
-  // FIXME
-  let user = await store.getUser(id)
+  log.info('deserialize user:', id)
+  let user = await userStore.getUserById(id)
   if (user) {
     done(null, user)
   } else {
@@ -21,22 +18,19 @@ passport.deserializeUser(async function (id, done) {
   }
 })
 
-passport.use(new LocalStrategy(function(username, password, done) {
-  for (let u of users) {
-    if (u.username === username && u.password === password) {
-      log.info('matched:', u)
-      done(null, u)
-    }
-    log.info('not matched:', username, password)
+const LocalStrategy = require('passport-local').Strategy
+passport.use(new LocalStrategy(async function(username, password, done) {
+  let user = await userStore.getUserByName(username)
+  if (user && check(password, user.hash)) {
+    done(null, user)
+  } else {
+    log.info(`auth failed for`, username)
     done(null, false)
   }
 }))
 
 // auth router
-
-// TODO user storage and encrypt
-let users = [{id: 0, username: 'admin', password: 'admin'}]
-
+const Router = require('koa-router')
 const pub = new Router()
 pub.post('/s/logout', function (ctx) {
   ctx.logout()
@@ -49,10 +43,15 @@ pub.post('/s/logout', function (ctx) {
 ).post('/s/register', async (ctx) => {
   log.info('register:', JSON.stringify(ctx.request.body))
   let u = ctx.request.body
-  u.id = users.length
-  users.push(u)
-  ctx.login(u)
-  ctx.redirect('/s/status')
+  u.id = Date.now()
+  u.hash = encrypt(u.password)
+  let success = userStore.addUser(u)
+  if (!success) {
+    ctx.login(u)
+    ctx.redirect('/s/status')
+  } else {
+    ctx.throw(409)
+  }
 }).get('/s/status', async (ctx) => {
   if (ctx.isAuthenticated()) {
     let user = ctx.state.user
@@ -71,8 +70,18 @@ async function guard (ctx, next) {
   }
 }
 
+// password encrypt
+const bcrypt = require('bcrypt');
+function encrypt(input) {
+  return bcrypt.hashSync(input, 5); // salt 5 round
+}
+
+function check(input, hash) {
+  return bcrypt.compareSync(input, hash);
+}
+
 module.exports = {
   pub: pub,
   guard: guard,
-  pass: passport
+  passport: passport
 }

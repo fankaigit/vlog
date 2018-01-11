@@ -2,6 +2,7 @@ const log = require('../../src/utils/log.js')
 
 const sqlite3 = require('sqlite3').verbose()
 const dbFile = 'data/db'
+
 const db = new sqlite3.Database(dbFile, (err) => {
   if (err) {
     log.error(`Error open ${dbFile}: `, err)
@@ -9,28 +10,6 @@ const db = new sqlite3.Database(dbFile, (err) => {
   }
   log.info(`Connected to ${dbFile}`)
 })
-
-function handleError (err) {
-  if (err) {
-    log.error(err)
-  }
-}
-
-const initSql = 'CREATE TABLE IF NOT EXISTS user (' +
-  'id INTEGER PRIMARY KEY,' +
-  'username TEXT NOT NULL, ' +
-  'password TEXT NOT NULL)'
-
-function initDb () {
-  db.serialize(function () {
-    db.run(initSql, handleError)
-    db.get('SELECT COUNT(*) AS cnt FROM user', (err, row) => {
-      handleError(err)
-      log.info('user count:', row.cnt)
-    })
-  })
-}
-initDb()
 
 process.on('SIGINT', function () {
   log.error('Caught interrupt signal, will save data and exit!')
@@ -42,16 +21,32 @@ process.on('SIGINT', function () {
   })
 })
 
-// users
-// FIXME
-async function getUser (id) {
-  db.get('SELECT * FROM user WHERE id=?', [id], (err, row) => {
-    handleError(err)
-    log.info(JSON.stringify(row))
-    return row
+function dball(sql, data) {
+  return new Promise(function (resolve, reject) {
+    db.all(sql, data, (err, rows) => {
+      err ? reject(err) : resolve(rows)
+    });
+  })
+}
+
+function dbget(sql, data) {
+  return new Promise(function (resolve, reject) {
+    db.get(sql, data, (err, row) => {
+      err ? reject(err) : resolve(row)
+    });
+  })
+}
+
+function dbrun(sql, data) {
+  return new Promise(function (resolve, reject) {
+    db.run(sql, data, (err) => {
+      err ? reject(err) : resolve()
+    });
   })
 }
 
 module.exports = {
-  getUser: getUser
+  db: db,
+  dbget: dbget,
+  dbrun: dbrun
 }
