@@ -39,7 +39,7 @@ async function getUserByName (name) {
   }
 }
 
-async function addUser(user) {
+async function addUser (user) {
   try {
     log.info(JSON.stringify(user))
     await dbrun('INSERT INTO user (id, name, hash) VALUES (?, ?, ?)', [user.id, user.username, user.hash])

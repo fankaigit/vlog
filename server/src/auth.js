@@ -12,14 +12,14 @@ passport.deserializeUser(async function (id, done) {
   log.info('deserialize user:', id)
   let user = await userStore.getUserById(id)
   if (user) {
-    done(null, user)
+    done(null, { id: user.id, username: user.name })
   } else {
     done(null, false)
   }
 })
 
 const LocalStrategy = require('passport-local').Strategy
-passport.use(new LocalStrategy(async function(username, password, done) {
+passport.use(new LocalStrategy(async function (username, password, done) {
   let user = await userStore.getUserByName(username)
   if (user && check(password, user.hash)) {
     done(null, user)
@@ -46,7 +46,7 @@ pub.post('/s/logout', function (ctx) {
   u.id = Date.now()
   u.hash = encrypt(u.password)
   let success = userStore.addUser(u)
-  if (!success) {
+  if (success) {
     ctx.login(u)
     ctx.redirect('/s/status')
   } else {

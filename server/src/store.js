@@ -21,7 +21,7 @@ process.on('SIGINT', function () {
   })
 })
 
-function dball(sql, data) {
+function dball (sql, data) {
   return new Promise(function (resolve, reject) {
     db.all(sql, data, (err, rows) => {
       err ? reject(err) : resolve(rows)
@@ -29,7 +29,7 @@ function dball(sql, data) {
   })
 }
 
-function dbget(sql, data) {
+function dbget (sql, data) {
   return new Promise(function (resolve, reject) {
     db.get(sql, data, (err, row) => {
       err ? reject(err) : resolve(row)
@@ -37,7 +37,7 @@ function dbget(sql, data) {
   })
 }
 
-function dbrun(sql, data) {
+function dbrun (sql, data) {
   return new Promise(function (resolve, reject) {
     db.run(sql, data, (err) => {
       err ? reject(err) : resolve()
