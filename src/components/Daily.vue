@@ -26,19 +26,16 @@
             <div class="column">
               <record :habit="habits[hid]" :t="t" :v="v" :values="values"></record>
             </div>
-            <div class="action column is-2" @click="delRecord(hid, t)" v-if="isCurrentDateToday">
+            <div class="action column is-2" @click="delRecord(hid, t)" v-if="editable">
               <i class="fa fa-minus-circle"/>
             </div>
           </div>
-          <div class="habit-record columns is-mobile" v-if="isCurrentDateToday">
+          <div class="habit-record columns is-mobile" v-if="editable">
             <div class="column">
             </div>
             <div class="action column is-2" @click="addRecord(hid)">
               <i class="fa fa-plus-circle"/>
             </div>
-          </div>
-          <div v-if="!isCurrentDateToday && Object.keys(values).length === 0">
-            没有记录
           </div>
         </div>
       </div>
@@ -64,14 +61,14 @@
     },
     methods: {
       addRecord: function (hid) {
-        let key = DateUtils.now()
+        let key = this.isCurrentDateToday ? DateUtils.now() : this.$store.getters.endOfDate
         let hrecords = this.records[hid] || {}
-        if (key in hrecords) {
-          log.error(`key ${key} already exists for ${hid}`)
-        } else {
-          Vue.set(hrecords, key, 0)
-          this.$store.commit('saveRecord', {hid: hid, key: key, value: 0})
+        while (key in hrecords) {
+          log.info(`key ${key} already exists for ${hid}, use next`)
+          key += 1
         }
+        Vue.set(hrecords, key, 0)
+        this.$store.commit('saveRecord', {hid: hid, key: key, value: 0})
       },
       delRecord: function (hid, key) {
         this.$store.commit('delRecord', {hid: hid, key: key})
@@ -117,6 +114,9 @@
       },
       isCurrentDateToday: function () {
         return DateUtils.startOfToday() === this.$store.state.startOfDate
+      },
+      editable: function () {
+        return true // TODO
       }
     }
   }

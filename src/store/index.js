@@ -69,6 +69,9 @@ const mutations = {
 const getters = {
   loggedIn: function (state) {
     return state.user !== null
+  },
+  endOfDate: function (state) {
+    return state.startOfDate + DateUtils.MILLIS_PER_DAY - 1000
   }
 }
 
