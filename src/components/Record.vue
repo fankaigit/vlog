@@ -1,9 +1,13 @@
 <template>
   <div class="record columns is-mobile">
     <div class="slider-column column is-7">
-      <input class="slider" :id="habit.name + t" type="range"
-             :min="habit.min" :max="habit.max" :value="v"
-             :step="habit.step"  @change="saveRecord(habit.id, t)"/>
+      <div class="tip" v-if="touched">
+        <div class="txt" v-if="habit.values.length > 0">{{habit.values[v]}}</div>
+        <div v-else>{{v}}</div>
+      </div>
+      <input class="slider" :id="habit.name + t" type="range" :step="habit.step"
+             :min="habit.min" :max="habit.max" :value="v" @input="saveRecord(habit.id, t)"
+             @touchstart="onTouchStart()" @touchend="onTouchEnd()" />
     </div>
 
     <div class="txt-column column is-5">
@@ -25,7 +29,8 @@
     props: ['habit', 't', 'v', 'values'],
     data () {
       return {
-        DateUtils: DateUtils
+        DateUtils: DateUtils,
+        touched: false
       }
     },
     methods: {
@@ -34,6 +39,12 @@
         let val = ele ? ele.value : 0
         log.info('save', this.habit.name, t, val)
         this.$store.commit('saveRecord', {hid: hid, key: t, value: val})
+      },
+      onTouchStart: function () {
+        this.touched = true
+      },
+      onTouchEnd: function () {
+        this.touched = false
       }
     }
   }
@@ -41,28 +52,42 @@
 
 <style scoped>
 
-  .txt-column {
-    line-height: 1.4em;
+  .slider-column .tip {
+    width: 300%;
+    height: 0px;
+    position: relative;
+    bottom: 1em;
+    left: -100%;
+    line-height: 1em;
+    font-weight: bold;
+    font-size: 2em;
+    text-align: center;
+    color: darkcyan;
+  }
+
+  .txt-column.column {
+    line-height: 1.3em;
+    overflow: hidden;
+    padding-left: 0.5em;
+    white-space: nowrap;
   }
 
   .txt-column .value {
     font-size: 0.9em;
-    margin-left: 1em;
   }
 
   .txt-column .unit {
     font-size: 0.6em;
   }
 
-  .txt-column .txt {
+  .record .txt {
     font-size: 0.7em;
-    margin-left: 1em;
+    padding-top: 0.2em;
   }
 
   .column {
     margin: 0;
     padding: 0;
-    overflow: hidden;
   }
 
   .slider {
