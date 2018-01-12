@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import log from '../utils/log'
 import axios from 'axios'
 import appConfig from '../../conf'
+import DateUtils from '../utils/date'
 
 Vue.use(Vuex)
 
@@ -13,9 +14,11 @@ const state = {
     updatedTime: -1
   },
   inited: false,
-  user: null
+  user: null,
+  startOfDate: null
 }
 
+log.info(JSON.stringify(state))
 const mutations = {
   saveHabit: function (state, h) {
     Vue.set(state.data.habits, h.id, h)
@@ -51,6 +54,15 @@ const mutations = {
     } else {
       log.info('skip update data')
     }
+  },
+  selectPrevDate: function (state) {
+    log.info(state.startOfDate)
+    state.startOfDate -= DateUtils.MILLIS_PER_DAY
+    log.info(state.startOfDate)
+  },
+  selectNextDate: function (state) {
+    state.startOfDate += DateUtils.MILLIS_PER_DAY
+    log.info(state.startOfDate)
   }
 }
 
@@ -63,7 +75,8 @@ const getters = {
 const actions = {
   init: function (context) {
     if (!context.state.inited) {
-      log.info('init data')
+      log.info('init data', DateUtils.startOfToday())
+      context.state.startOfDate = DateUtils.startOfToday()
       loadLocal(context)
       context.state.inited = true
       checkLogin(context)
