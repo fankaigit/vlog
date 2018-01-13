@@ -6,6 +6,8 @@ import App from './App'
 import router from './router'
 import store from './store'
 
+require('./assets/main.scss')
+
 Vue.config.productionTip = false
 Vue.use(Vuex)
 
