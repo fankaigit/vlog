@@ -153,6 +153,12 @@
           h.max = h.values.length - 1
           h.step = 1
           h.unit = ''
+        } else if (h.type === 'check') {
+          h.values = []
+          h.min = 0
+          h.max = 1
+          h.step = 1
+          h.unit = ''
         } else {
           h.values = []
         }
