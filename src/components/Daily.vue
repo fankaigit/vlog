@@ -1,52 +1,35 @@
-<template>
-  <div>
-    <section id="header" class="hero is-info is-small">
-      <p class="title">{{DateUtils.formatDate($store.state.startOfDate)}}</p>
-    </section>
+<template lang="pug">
+  div
 
-    <section id="date" class="columns is-mobile">
-      <div id="prev" class="column is-3" @click="selectPrevDate()">
-        <i class="fa fa-arrow-left"/>
-        {{DateUtils.dayOfWeek(DateUtils.prevDate($store.state.startOfDate))}}
-      </div>
-      <div id="current" class="column is-6">
-        {{DateUtils.dayOfWeek($store.state.startOfDate)}}
-      </div>
-      <div id="next" class="column is-3" @click="selectNextDate()" v-if="!isCurrentDateToday">
-        {{DateUtils.dayOfWeek(DateUtils.nextDate($store.state.startOfDate))}}
-        <i class="fa fa-arrow-right"/>
-      </div>
-    </section>
+    section#header.hero.is-info.is-small
+      p.title {{DateUtils.formatDate($store.state.startOfDate)}}
 
-    <section id="records">
-      <div class="habit" v-for="(values, hid) in records">
-        <div class="habit-name">{{habits[hid].name}}</div>
-        <div class="habit-records">
-          <div class="habit-record columns is-mobile" v-for="(v, t) in values" v-if="habits[hid].type !== 'check'">
-            <div class="column">
-              <record :habit="habits[hid]" :t="t" :v="v" :values="values"></record>
-            </div>
-            <div class="action column is-2" @click="delRecord(hid, t)" v-if="editable">
-              <i class="fa fa-minus-circle"/>
-            </div>
-          </div>
-          <div class="habit-record columns is-mobile" v-if="editable && habits[hid].type !== 'check'">
-            <div class="column">
-            </div>
-            <div class="action column is-2" @click="addRecord(hid)">
-              <i class="fa fa-plus-circle"/>
-            </div>
-          </div>
-          <div class="habit-record" v-if="editable && habits[hid].type === 'check'">
-            <div class="habit-check">
-              <i class="fa fa-check-square-o" @click="toggle(hid)" v-if="isChecked(hid)"/>
-              <i class="fa fa-square-o" @click="toggle(hid)" v-else/>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
+    section#date.columns.is-mobile
+      #prev.column.is-3(@click="selectPrevDate()")
+        i.fa.fa-arrow-left
+        span {{DateUtils.dayOfWeek(DateUtils.prevDate($store.state.startOfDate))}}
+      #current.column.is-6 {{DateUtils.dayOfWeek($store.state.startOfDate)}}
+      #next.column.is-3(@click="selectNextDate()", v-if="!isCurrentDateToday")
+        span {{DateUtils.dayOfWeek(DateUtils.nextDate($store.state.startOfDate))}}
+        i.fa.fa-arrow-right
+
+    section#records
+      .habit(v-for="(values, hid) in records")
+        .habit-name {{habits[hid].name}}
+        .habit-records
+          .habit-record.columns.is-mobile(v-for="(v, t) in values", v-if="habits[hid].type !== 'check'")
+            .column
+              record(:habit="habits[hid]", :t="t", :v="v", :values="values")
+            .column.is-2.action(@click="delRecord(hid, t)", v-if="editable")
+              i.fa.fa-minus-circle
+          .habit-record.columns.is-mobile(v-if="editable && habits[hid].type !== 'check'")
+            .column
+            .column.is-2.action(@click="addRecord(hid)")
+              i.fa.fa-plus-circle
+          .habit-record(v-if="editable && habits[hid].type === 'check'")
+            .habit-check
+              i.fa.fa-check-square-o(@click="toggle(hid)", v-if="isChecked(hid)")
+              i.fa.fa-square-o(@click="toggle(hid)", v-else)
 </template>
 
 <script>
@@ -153,79 +136,74 @@
   }
 </script>
 
-<style scoped="">
+<style lang="scss" scoped="">
 
-  #date #prev {
-    text-align: left;
-    padding-left: 2em;
-  }
-
-  #date #next {
-    text-align: right;
-    padding-right: 2em;
-  }
-
-  #date #prev,#next {
-    color: darkcyan;
-  }
-
-  #date #current {
-    text-align: center;
+  *, :last-child, :first-child {
+    padding: 0;
+    margin: 0;
   }
 
   #date {
-    margin: 0.3rem auto;
-    padding: 0;
+    margin: 0.3rem auto 0;
     overflow: hidden;
     height: 1.5em;
-  }
 
-  #date .column {
-    padding: 0;
+    #current {
+      text-align: center;
+    }
+    #prev {
+      text-align: left;
+      padding-left: 2em;
+    }
+    #next {
+      text-align: right;
+      padding-right: 2em;
+    }
+    #prev, #next {
+      color: darkcyan;
+    }
   }
 
   #records {
     display: table;
     width: 100%;
-    margin-top: 0.5rem;
-    margin-bottom: 3rem;
+    margin: 1rem auto 0;
+
+    .habit {
+      display: table-row;
+
+      >* {
+        border-bottom: 1px solid lightblue;
+        display: table-cell;
+      }
+
+      .habit-name {
+        vertical-align: middle;
+        width: 30%;
+        text-align: center;
+        font-size: 1.4rem;
+      }
+    }
   }
 
-  .habit {
-    display: table-row;
-  }
-
-  .habit-name {
-    display: table-cell;
-    width: 30%;
-    border-bottom: 1px solid lightblue;
-    vertical-align: middle;
-    text-align: center;
-    font-size: 1.4rem;
-  }
-
-  .habit-records {
-    display: table-cell;
-    border-bottom: 1px solid lightblue;
+  #records .habit .habit-records {
     font-size: 1.5rem;
-  }
 
-  .habit-records * {
-    padding: 0;
-    margin: 0;
-  }
+    .habit-record {
+      &:not(:last-child) {
+        border-bottom: 1px solid whitesmoke;
+        margin-bottom: 0.1rem;
+      }
 
-  .habit-record:not(:last-child) {
-    border-bottom: 1px solid whitesmoke;
-    margin-bottom: 0.1rem;
-  }
+      .action {
+        text-align: center;
+        vertical-align: middle;
+      }
 
-  .habit-record .action {
-    text-align: center;
-  }
-
-  .habit-record .habit-check i {
-    margin: 0.3rem 0 0 4rem;
+      .habit-check i {
+        margin: 0.3rem 0 0 4rem;
+      }
+    }
   }
 
   .fa-minus-circle {
