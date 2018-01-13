@@ -1,48 +1,77 @@
-<template>
-  <div>
-    <section id="header" class="hero is-info is-small">
-      <p class="title">我的活动</p>
-    </section>
+<template lang="pug">
+  div
+    section#header.hero.is-info.is-small
+      p.title 我的活动
 
-    <div id="habits">
-      <div v-for="(h, id) in habits" class="habit" v-if="!h.deleted">
-        <div class="columns is-mobile" style="width:100%">
-          <div id='name' class="column is-6">{{h.name}}</div>
-          <div class="column is-4">
-            {{htypes[h.type]}}
-          </div>
-          <div class="column is-2">
-            <router-link :to="'/habits/' + h.id">
-              <i class="fa fa-arrow-circle-right"/>
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </div>
+    section#habits
+      .habit(v-for="(h, id) in habits", v-if="!h.deleted")
+        .habit-name {{h.name}}
+        .habit-type
+          span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'check'")
+            i.fa.fa-square-o.fa-stack-2x
+            i.fa.fa-check.fa-stack-1x
+          span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'number'")
+            i.fa.fa-square-o.fa-stack-2x
+            i.fa.fa-stack-1x 3
+          span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'custom'")
+            i.fa.fa-square-o.fa-stack-2x
+            i.fa.fa-star.fa-stack-1x
+          =" "
+          span {{htypes[h.type]}}
+        .habit-stat
+          router-link(:to="'/stats/' + h.id")
+            i.fa.fa-bar-chart
+        .habit-config
+          router-link(:to="'/habits/' + h.id")
+            i.fa.fa-cog
 
-    <section id="actions">
-      <router-link to="/habits/-1" class="button is-primary">
-        新建
-      </router-link>
-    </section>
+    section#actions
+      router-link.button.is-primary(:to="'/habits/-1'") 新建一个活动
 
-  </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+  @import "../assets/main.scss";
 
   #habits {
-    margin: 0.3rem 1rem;
+    display: table;
+    width: 90%;
+    margin: 1rem auto 0;
   }
 
   #habits .habit {
-    border-bottom: 1px solid lightblue;
-    margin-bottom: 0.5rem;
-  }
+    display: table-row;
 
-  #habits a {
-    text-align: right;
-    color: darkcyan;
+    & > * {
+      display: table-cell;
+      border-bottom: 1px solid lightblue;
+      font-size: 1.2rem;
+    }
+
+    .habit-name {
+      width: 40%;
+    }
+
+    .habit-icon {
+      /*width: 40%;*/
+      font-size: 50%;
+      margin-bottom: 0.05rem;
+      color: sandybrown;
+    }
+
+    .habit-stat {
+      /*width: 10%;*/
+      a {
+        color: $primary;
+      }
+    }
+
+    .habit-config {
+      /*width: 10%;*/
+      a {
+        color: $info;
+      }
+    }
   }
 
   #actions .button {

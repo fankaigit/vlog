@@ -14,11 +14,6 @@
         </router-link>
       </div>
       <div>
-        <router-link to="/stats">
-          <i class="fa fa-bar-chart"/>
-        </router-link>
-      </div>
-      <div>
         <router-link to="/user">
           <i class="fa fa-user" v-if="$store.getters.loggedIn"/>
           <i class="fa fa-user-secret" v-else/>
