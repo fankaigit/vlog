@@ -102,7 +102,8 @@
               nv[t] = vs[t]
             }
           }
-          if (hid in this.habits) {
+          let h = this.habits[hid]
+          if ((h && !h.deleted) || Object.keys(nv).length > 0) {
             ret[hid] = nv
           }
         }

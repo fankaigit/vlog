@@ -5,23 +5,25 @@
     </section>
 
     <div id="habits">
-      <div class="habit" v-for="(h, id) in habits">
-        <div class="habit" @click="select(h)" v-if="!h.deleted"
-             :class="h === selected ? 'selected' : 'unselected'">
-          {{h.name}},{{h.min}},{{h.max}},{{h.step}},{{h.values}}
+      <div v-for="(h, id) in habits" class="habit" v-if="!h.deleted">
+        <div class="columns is-mobile" style="width:100%">
+          <div id='name' class="column is-6">{{h.name}}</div>
+          <div class="column is-4">
+            {{htypes[h.type]}}
+          </div>
+          <div class="column is-2">
+            <router-link :to="'/habits/' + h.id">
+              <i class="fa fa-arrow-circle-right"/>
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
 
     <section id="actions">
-      <router-link to="/habits/-1" class="button is-primary is-large">
+      <router-link to="/habits/-1" class="button is-primary">
         新建
       </router-link>
-      <router-link :to="'/habits/' + selected.id" class="button is-warning is-large"
-                   v-if="selected != undefined">
-        修改
-      </router-link>
-      <a class="button is-danger is-large" @click="remove" v-if="selected != undefined">删除</a>
     </section>
 
   </div>
@@ -30,40 +32,43 @@
 <style scoped>
 
   #habits {
-    margin-top: 0.2em;
+    margin: 0.3rem 1rem;
   }
 
-  #habits .selected {
-    background-color: lightblue;
+  #habits .habit {
+    border-bottom: 1px solid lightblue;
+    margin-bottom: 0.5rem;
   }
 
-  #actions {
-    margin-top: 0.3em;
+  #habits a {
+    text-align: right;
+    color: darkcyan;
+  }
+
+  #actions .button {
+    display: block;
+    margin: 2rem auto;
+    width: 90%;
   }
 
 </style>
 
 <script>
   import log from '../utils/log'
+  import htypes from '../utils/htypes'
 
   export default {
     name: 'Habits',
     data () {
       return {
-        selected: undefined
+        selected: undefined,
+        htypes: htypes
       }
     },
     methods: {
       select: function (h) {
         log.info(`select ${h.id} ${h.name}`)
         this.selected = h
-      },
-      remove: function () {
-//        if (this.$store.)
-        if (this.selected !== undefined) {
-          this.selected.deleted = true
-          this.$store.commit('saveHabit', this.selected)
-        }
       }
     },
     created: function () {
