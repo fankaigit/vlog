@@ -38,9 +38,9 @@
             </div>
           </div>
           <div class="habit-record" v-if="editable && habits[hid].type === 'check'">
-            <div class="habit-check" @click="toggle(hid)">
-              <i class="fa fa-check-square-o" v-if="isChecked(hid)"/>
-              <i class="fa fa-square-o" v-else/>
+            <div class="habit-check">
+              <i class="fa fa-check-square-o" @click="toggle(hid)" v-if="isChecked(hid)"/>
+              <i class="fa fa-square-o" @click="toggle(hid)" v-else/>
             </div>
           </div>
         </div>
@@ -225,7 +225,7 @@
   }
 
   .habit-record .habit-check i {
-    margin: 0.3rem 0 0 6rem;
+    margin: 0.3rem 0 0 4rem;
   }
 
   .fa-minus-circle {
