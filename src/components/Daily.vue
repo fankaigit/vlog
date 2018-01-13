@@ -22,7 +22,7 @@
       <div class="habit" v-for="(values, hid) in records">
         <div class="habit-name">{{habits[hid].name}}</div>
         <div class="habit-records">
-          <div class="habit-record columns is-mobile" v-for="(v, t) in values">
+          <div class="habit-record columns is-mobile" v-for="(v, t) in values" v-if="habits[hid].type !== 'check'">
             <div class="column">
               <record :habit="habits[hid]" :t="t" :v="v" :values="values"></record>
             </div>
@@ -30,11 +30,17 @@
               <i class="fa fa-minus-circle"/>
             </div>
           </div>
-          <div class="habit-record columns is-mobile" v-if="editable">
+          <div class="habit-record columns is-mobile" v-if="editable && habits[hid].type !== 'check'">
             <div class="column">
             </div>
             <div class="action column is-2" @click="addRecord(hid)">
               <i class="fa fa-plus-circle"/>
+            </div>
+          </div>
+          <div class="habit-record" v-if="editable && habits[hid].type === 'check'">
+            <div class="habit-check" @click="toggle(hid)">
+              <i class="fa fa-check-square-o" v-if="isChecked(hid)"/>
+              <i class="fa fa-square-o" v-else/>
             </div>
           </div>
         </div>
@@ -78,6 +84,30 @@
       },
       selectNextDate: function () {
         this.$store.commit('selectNextDate')
+      },
+      firstKey: function (hid) {
+        let rs = this.records[hid]
+        if (!rs) {
+          return null
+        }
+        let keys = Object.keys(rs)
+        if (keys.length === 0) {
+          return null
+        }
+        return keys[0]
+      },
+      isChecked: function (hid) {
+        let rs = this.records[hid]
+        let k = this.firstKey(hid)
+        return rs && k && rs[k] > 0
+      },
+      toggle: function (hid) {
+        let val = !this.isChecked(hid)
+        if (!this.firstKey(hid)) {
+          this.addRecord(hid)
+        }
+        let k = this.firstKey(hid)
+        this.$store.commit('saveRecord', {hid: hid, key: k, value: val})
       }
     },
     created: function () {
@@ -144,7 +174,7 @@
   }
 
   #date {
-    margin: 0;
+    margin: 0.3rem auto;
     padding: 0;
     overflow: hidden;
     height: 1.5em;
@@ -194,11 +224,23 @@
     text-align: center;
   }
 
+  .habit-record .habit-check i {
+    margin: 0.3rem 0 0 6rem;
+  }
+
   .fa-minus-circle {
     color: tomato;
   }
 
   .fa-plus-circle {
+    color: gray;
+  }
+
+  .fa-square-o {
+    color: gray;
+  }
+
+  .fa-check-square-o {
     color: lightseagreen;
   }
 </style>
