@@ -1,59 +1,38 @@
-<template>
-  <div>
-    <section id="header" class="hero is-info is-small">
-      <p class="title">{{ loggedIn ? '用户' : '登录/注册' }}</p>
-    </section>
+<template lang="pug">
+  div
+    section#header.hero.is-info.is-small
+      p.title {{ loggedIn ? '用户' : '登录/注册' }}
 
-    <section id="user" v-if="loggedIn">
-      <div style="text-align:center">
-        <h3>
-          用户：{{user.username}}
-        </h3>
-      </div>
-      <div class="button is-danger" @click="logout()">Logout</div>
-    </section>
+    section#user(v-if="loggedIn")
+      h3.field 用户：{{user.username}}
+      p.field.button.is-danger(@click="logout()") 退出登录
 
-    <section id="login" v-else>
-      <div class="field">
-        <p class="control has-icons-left has-icons-right">
-          <input class="input" type="text" v-model="username" maxlength="20" placeholder="用户名"/>
-          <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
-          <span class="icon is-small is-right" v-if="isValidUserName">
-            <i class="fa fa-check"></i>
-          </span>
-        </p>
-        <div class="notice">
-           <span v-if="username !== '' && !isValidUserName">
-            用户名只能包含字母和数字，6-20个字符
-          </span>
-        </div>
-      </div>
+    section#login(v-else)
+      .field
+        p.control.has-icons-left.has-icons-right
+          input.input(type="text", v-model="username", maxlength="20", placeholder="用户名")
+          span.icon.is-small.is-left
+            i.fa.fa-user
+          span.icon.is-small.is-right(v-if="isValidUserName")
+            i.fa.fa-check
+        .notice
+          p(v-if="username !== '' && !isValidUserName") 用户名只能包含字母和数字，6-20个字符
 
-      <div class="field">
-        <p class="control has-icons-left has-icons-right">
-          <input class="input" type="password" v-model="password" maxlength="20" placeholder="密码">
-          <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
-          <span class="icon is-small is-right" v-if="isValidPassword">
-            <i class="fa fa-check"></i>
-          </span>
-        </p>
-        <div class="notice">
-           <span v-if="password !== '' && !isValidPassword">
-            密码必须包含字母和数字，6-20个字符
-          </span>
-        </div>
-      </div>
+      .field
+        p.control.has-icons-left.has-icons-right
+          input.input(type="password", v-model="password", maxlength="20", placeholder="密码")
+          span.icon.is-small.is-left
+            i.fa.fa-lock
+          span.icon.is-small.is-right(v-if="isValidPassword")
+            i.fa.fa-check
+        .notice
+          p(v-if="password !== '' && !isValidPassword") 密码必须包含字母和数字，6-20个字符
 
-      <div class="field">
-        <div class="login button is-success" @click="login()">登录</div>
-        <div class="button is-warning is-small" @click="register()">注册</div>
-        <div class="notice">
-           <div style="text-align: center">{{actionNotice}}</div>
-        </div>
-      </div>
-    </section>
-
-  </div>
+      .field
+        .button.is-success(@click="login()") 登录
+        .button.is-warning(@click="register()") 注册
+        .notice
+          p(style="text-align: center") {{actionNotice}}
 </template>
 
 <style scoped>

@@ -1,23 +1,17 @@
-<template>
-  <div class="record columns is-mobile">
-    <div class="slider-column column is-7">
-      <div class="tip" v-if="touched">
-        <div class="txt" v-if="habit.values.length > 0">{{habit.values[v]}}</div>
-        <div v-else>{{v}}</div>
-      </div>
-      <input class="slider" :id="habit.name + t" type="range" :step="habit.step"
-             :min="habit.min" :max="habit.max" :value="v" @input="saveRecord(habit.id, t)"
-             @touchstart="onTouchStart()" @touchend="onTouchEnd()" />
-    </div>
-
-    <div class="txt-column column is-5">
-      <div class="txt" v-if="habit.values.length > 0">{{habit.values[v]}}</div>
-      <div v-else>
-        <span class="value">{{v}}</span>
-        <span class="unit" v-if="habit.unit !== ''">{{habit.unit}}</span>
-      </div>
-    </div>
-  </div>
+<template lang="pug">
+  .record.columns.is-mobile
+    .slider-column.column.is-7
+      .tip(v-if="touched")
+        .txt(v-if="habit.values.length > 0") {{habit.values[v]}}
+        .txt(v-else) {{v}}
+      input.slider(:id="habit.name + t", type="range", :step="habit.step",
+        :min="habit.min", :max="habit.max", :value="v", @input="saveRecord(habit.id, t)",
+        @touchstart="onTouchStart()", @touchend="onTouchEnd()")
+    .text-column.column.is-5
+      .txt(v-if="habit.values.length > 0") {{habit.values[v]}}
+      .txt(v-else)
+        .value {{v}}
+        .unit(v-if="habit.unit !== ''") {{habit.unit}}
 </template>
 
 <script>
