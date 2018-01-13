@@ -37,8 +37,24 @@
       </div>
 
       <div class="field" v-if="type === 'custom'">
-        <label>自定义值</label>
-        <input class="input is-warning" type="text" v-model="hvalues" placeholder="空格分开的描述"/>
+        <label>自定义标签</label>
+        <input class="input is-warning" type="text" v-model="hvalues" placeholder="空格分开的标签"/>
+      </div>
+
+      <div class="field notice" v-if="type === 'check'">
+        <p>用于打卡，每天只能记录一次。</p>
+        <p>比如记录每天是否运动。</p>
+
+      </div>
+
+      <div class="field notice" v-if="type === 'number'">
+        <p>使用数值来记录，每天可记录多次。</p>
+        <p>比如每天跑步3-5公里，可以设置数值范围为3-5，单位为公里。</p>
+      </div>
+
+      <div class="field notice" v-if="type === 'custom'">
+        <p>使用自定义标签来记录，每天可记录多次。</p>
+        <p>比如用于记录运动状态，可以设置标签为 轻微、适量、剧烈。</p>
       </div>
 
     </section>
@@ -76,8 +92,12 @@
     padding: 0;
   }
 
+  #form .notice {
+    font-size: 90%;
+  }
+
   #actions {
-    margin: 4rem 1rem;
+    margin: 2rem 1rem;
   }
 
   #actions .button {
