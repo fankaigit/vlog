@@ -6,12 +6,14 @@
 
     section#date.columns.is-mobile
       #prev.column.is-3(@click="selectPrevDate()")
-        i.fa.fa-arrow-left
+        i.fa.fa-chevron-left
+        =" "
         span {{DateUtils.dayOfWeek(DateUtils.prevDate($store.state.startOfDate))}}
       #current.column.is-6 {{DateUtils.dayOfWeek($store.state.startOfDate)}}
       #next.column.is-3(@click="selectNextDate()", v-if="!isCurrentDateToday")
         span {{DateUtils.dayOfWeek(DateUtils.nextDate($store.state.startOfDate))}}
-        i.fa.fa-arrow-right
+        =" "
+        i.fa.fa-chevron-right
 
     section#records
       .habit(v-for="(values, hid) in records")
