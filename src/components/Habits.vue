@@ -49,25 +49,25 @@
     }
 
     .habit-name {
-      width: 40%;
+      width: 30%;
     }
 
     .habit-icon {
-      /*width: 40%;*/
+      /*width: 30%;*/
       font-size: 50%;
       margin-bottom: 0.05rem;
       color: sandybrown;
     }
 
     .habit-stat {
-      /*width: 10%;*/
+      width: 20%;
       a {
         color: $primary;
       }
     }
 
     .habit-config {
-      /*width: 10%;*/
+      width: 10%;
       a {
         color: $info;
       }

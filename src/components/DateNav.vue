@@ -18,16 +18,16 @@
   @import "../assets/main.scss";
 
   .date-nav {
-    height: 2.4rem;
+    height: 2rem;
     width: 100%;
-    background-color: lightskyblue;
+    background-color: rgba(32, 156, 238, 0.6);
     text-align: center;
 
     >* {
       display: inline-block;
       color: whitesmoke;
-      font-size: 1.2rem;
-      padding-top: 0.4rem;
+      font-size: 1rem;
+      padding-top: 0.3rem;
     }
 
     .date-nav-prev, .date-nav-next {

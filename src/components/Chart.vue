@@ -54,7 +54,7 @@
         return this.startOfMonth.format('YYYY年MM月')
       },
       chartHeight: function () {
-        return Math.min(300, window.innerHeight - 250)
+        return Math.max(100, Math.min(300, window.innerHeight - 200))
       }
     },
     computed: {
