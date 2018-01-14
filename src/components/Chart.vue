@@ -1,41 +1,9 @@
 <template lang="pug">
   #bar-chart
-    #cal-nav
-      #cal-prev(@click="pickPrevMonth()")
-        i.fa.fa-chevron-left
-      #cal-title {{ monthTitle() }}
-      #cal-next(@click="pickNextMonth()")
-        i.fa.fa-chevron-right
+    #bar-chart-date-nav
+      date-nav(:data="navData")
     bar#bar(:data="chartData", :options="chartOptions", :height="chartHeight()")
-
 </template>
-
-<style lang="scss" scoped>
-  @import "../assets/main.scss";
-
-  #cal-nav {
-    height: 3rem;
-    width: 100%;
-    background-color: $primary;
-    text-align: center;
-
-    >* {
-      display: inline-block;
-      color: whitesmoke;
-      font-size: 1.4rem;
-      padding-top: 0.5rem;
-    }
-
-    #cal-prev, #cal-next {
-      width: 20%;
-    }
-
-    #cal-title {
-      width: 60%;
-    }
-  }
-
-</style>
 
 <script>
   import DateUtils from '../utils/date'
@@ -43,6 +11,7 @@
   import log from '../utils/log'
   import { Bar } from 'vue-chartjs'
   import Vue from 'vue'
+  import DateNav from './DateNav.vue'
 
   Vue.component('bar', {
     extends: Bar,
@@ -62,6 +31,9 @@
   export default {
     name: 'Chart',
     props: ['habit'],
+    components: {
+      dateNav: DateNav
+    },
     data () {
       return {
         DateUtils: DateUtils,
@@ -129,6 +101,18 @@
         return {
           labels: labels,
           datasets: datasets
+        }
+      },
+      navData: function () {
+        let that = this
+        return {
+          goPrev: that.pickPrevMonth,
+          goNext: that.pickNextMonth,
+          title: this.monthTitle(),
+          prev: '',
+          next: '',
+          displayPrev: () => true,
+          displayNext: () => true
         }
       }
     },

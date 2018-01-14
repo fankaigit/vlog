@@ -1,11 +1,7 @@
 <template lang="pug">
   #cal
-    #cal-nav
-      #cal-prev(@click="pickPrevMonth()")
-        i.fa.fa-chevron-left
-      #cal-title {{ monthTitle() }}
-      #cal-next(@click="pickNextMonth()")
-        i.fa.fa-chevron-right
+    #cal-date-nav
+      date-nav(:data="navData")
 
     #cal-body
       #cal-week-header.cal-week
@@ -19,28 +15,6 @@
 
 <style lang="scss" scoped>
   @import "../assets/main.scss";
-
-  #cal-nav {
-    height: 3rem;
-    width: 100%;
-    background-color: $primary;
-    text-align: center;
-
-    >* {
-      display: inline-block;
-      color: whitesmoke;
-      font-size: 1.4rem;
-      padding-top: 0.5rem;
-    }
-
-    #cal-prev, #cal-next {
-      width: 20%;
-    }
-
-    #cal-title {
-      width: 60%;
-    }
-  }
 
   #cal-body .cal-week {
     display: flex;
@@ -79,10 +53,14 @@
   import log from '../utils/log'
   import DateUtils from '../utils/date'
   import moment from 'moment'
+  import DateNav from './DateNav.vue'
 
   export default {
     name: 'Cal',
     props: ['habit'],
+    components: {
+      dateNav: DateNav
+    },
     data () {
       return {
         DateUtils: DateUtils,
@@ -144,6 +122,18 @@
     computed: {
       weekDayNames: function () {
         return DateUtils.weekDays()
+      },
+      navData: function () {
+        let that = this
+        return {
+          goPrev: that.pickPrevMonth,
+          goNext: that.pickNextMonth,
+          title: this.monthTitle(),
+          prev: '',
+          next: '',
+          displayPrev: () => true,
+          displayNext: () => true
+        }
       }
     }
   }

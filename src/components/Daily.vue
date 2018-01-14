@@ -1,19 +1,10 @@
 <template lang="pug">
   div
-
     section#header.hero.is-info.is-small
       p.title {{DateUtils.formatDate($store.state.startOfDate)}}
 
-    section#date.columns.is-mobile
-      #prev.column.is-3(@click="selectPrevDate()")
-        i.fa.fa-chevron-left
-        =" "
-        span {{DateUtils.dayOfWeek(DateUtils.prevDate($store.state.startOfDate))}}
-      #current.column.is-6 {{DateUtils.dayOfWeek($store.state.startOfDate)}}
-      #next.column.is-3(@click="selectNextDate()", v-if="!isCurrentDateToday")
-        span {{DateUtils.dayOfWeek(DateUtils.nextDate($store.state.startOfDate))}}
-        =" "
-        i.fa.fa-chevron-right
+    section#daily-date-nav
+      date-nav(:data="navData")
 
     section#records
       .habit(v-for="(values, hid) in records")
@@ -40,11 +31,13 @@
   import DateUtils from '../utils/date'
   import log from '../utils/log'
   import Record from './Record.vue'
+  import DateNav from './DateNav.vue'
 
   export default {
     name: 'Daily',
     components: {
-      record: Record
+      record: Record,
+      dateNav: DateNav
     },
     data () {
       return {
@@ -134,6 +127,22 @@
       },
       editable: function () {
         return true // TODO
+      },
+      navData: function () {
+        let that = this
+        return {
+          goPrev: that.selectPrevDate,
+          goNext: that.selectNextDate,
+          title: DateUtils.dayOfWeek(that.$store.state.startOfDate),
+          prev: DateUtils.dayOfWeek(DateUtils.prevDate(that.$store.state.startOfDate)),
+          next: DateUtils.dayOfWeek(DateUtils.nextDate(that.$store.state.startOfDate)),
+          displayPrev: function () {
+            return true
+          },
+          displayNext: function () {
+            return DateUtils.startOfToday() !== that.$store.state.startOfDate
+          }
+        }
       }
     }
   }
