@@ -20,7 +20,7 @@ export default new Router({
       component: Daily
     },
     {
-      path: '/stats',
+      path: '/stats/:hid',
       name: 'stats',
       component: Stats
     },

@@ -28,5 +28,28 @@ export default {
   },
   nextDate: function (t) {
     return t + this.MILLIS_PER_DAY
+  },
+  weekDays: function () {
+    const days = '日一二三四五六'
+    return days.split('')
+  },
+  monthDates: function (t) {
+    let current = moment(t)
+    let firstOfMonth = current.clone().startOf('month')
+    let firstOfCal = firstOfMonth.clone().startOf('week')
+    let endOfMonth = current.clone().endOf('month').startOf('day')
+    let endOfCal = endOfMonth.clone().endOf('week').startOf('day')
+    let result = []
+
+    for (let d = firstOfCal; d.unix() <= endOfCal.unix(); d = d.clone().add(7, 'days')) {
+      console.log(d.date())
+      let weekDates = []
+      for (let i = 0; i < 7; ++i) {
+        weekDates.push(d.clone().add(i, 'days'))
+      }
+      result.push(weekDates)
+    }
+
+    return result
   }
 }

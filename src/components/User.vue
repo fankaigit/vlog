@@ -49,6 +49,7 @@
   .button {
     display: block;
     margin: auto auto 1em;
+    padding-top: 0.3em;
   }
 
   .notice {
