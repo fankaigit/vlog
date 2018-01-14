@@ -139,7 +139,7 @@
 <style lang="scss" scoped="">
 
   /* somehow *{...} doesn't apply here */
-  .columns {
+  .columns, .column, .columns:last-child {
     padding: 0;
     margin: 0;
   }
