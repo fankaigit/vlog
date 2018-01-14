@@ -83,6 +83,7 @@
 
     .unit {
       display: inline-block;
+      margin-left: 0.1em;
       font-size: 0.6em;
     }
   }
