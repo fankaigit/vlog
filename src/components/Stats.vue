@@ -6,19 +6,21 @@
     section#stats-calendar(v-if="habit.type === 'check'")
       cal(:habit="habit")
 
-    section(v-else)
-      p {{ JSON.stringify(habit) }}
+    section#stats-bar-chart(v-if="habit.type === 'number' || habit.type === 'custom' ")
+      chart(:habit="habit")
 
 </template>
 
 <script>
   import log from '../utils/log'
   import Calendar from './Calendar'
+  import Chart from './Chart'
 
   export default {
     name: 'Stats',
     components: {
-      cal: Calendar
+      cal: Calendar,
+      chart: Chart
     },
     data: function () {
       return {

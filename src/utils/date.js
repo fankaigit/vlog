@@ -42,7 +42,6 @@ export default {
     let result = []
 
     for (let d = firstOfCal; d.unix() <= endOfCal.unix(); d = d.clone().add(7, 'days')) {
-      console.log(d.date())
       let weekDates = []
       for (let i = 0; i < 7; ++i) {
         weekDates.push(d.clone().add(i, 'days'))
