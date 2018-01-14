@@ -7,7 +7,7 @@
       input.slider(:id="habit.name + t", type="range", :step="habit.step",
         :min="habit.min", :max="habit.max", :value="v", @input="saveRecord(habit.id, t)",
         @touchstart="onTouchStart()", @touchend="onTouchEnd()")
-    .text-column.column.is-5
+    .txt-column.column
       .txt(v-if="habit.values.length > 0") {{habit.values[v]}}
       .txt(v-else)
         .value {{v}}
@@ -44,7 +44,12 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+  *, :last-child, :first-child {
+    padding: 0;
+    margin: 0;
+  }
 
   .slider-column .tip {
     width: 300%;
@@ -59,29 +64,27 @@
     color: darkcyan;
   }
 
-  .txt-column.column {
+  .txt-column {
+    height: 1.3em;
     line-height: 1.3em;
     overflow: hidden;
     padding-left: 0.5em;
     white-space: nowrap;
-  }
 
-  .txt-column .value {
-    font-size: 0.9em;
-  }
+    .txt {
+      font-size: 0.7em;
+      padding-top: 0.2em;
+    }
 
-  .txt-column .unit {
-    font-size: 0.6em;
-  }
+    .value {
+      display: inline-block;
+      font-size: 0.9em;
+    }
 
-  .record .txt {
-    font-size: 0.7em;
-    padding-top: 0.2em;
-  }
-
-  .column {
-    margin: 0;
-    padding: 0;
+    .unit {
+      display: inline-block;
+      font-size: 0.6em;
+    }
   }
 
   .slider {

@@ -138,7 +138,8 @@
 
 <style lang="scss" scoped="">
 
-  *, :last-child, :first-child {
+  /* somehow *{...} doesn't apply here */
+  .columns {
     padding: 0;
     margin: 0;
   }
