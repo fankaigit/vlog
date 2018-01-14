@@ -44,6 +44,7 @@
 
     & > * {
       display: table-cell;
+      padding-top: 1em;
       border-bottom: 1px solid lightblue;
       font-size: 1.2rem;
     }
