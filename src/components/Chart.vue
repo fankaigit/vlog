@@ -123,7 +123,7 @@
           label: this.habit.name + (this.habit.unit ? `(${this.habit.unit})` : ''),
           yLabels: this.habit.values,
           data: ds.map(d => this.values[d.unix()]),
-          backgroundColor: '#00d1b2'
+          backgroundColor: 'lightseagreen'
         }]
         log.info('data:', datasets)
         return {

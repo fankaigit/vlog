@@ -59,9 +59,9 @@
     left: -100%;
     line-height: 1em;
     font-weight: bold;
-    font-size: 2em;
+    font-size: 3em;
     text-align: center;
-    color: darkcyan;
+    color: rgba(0, 0, 0, 0.2);
   }
 
   .txt-column {
@@ -72,19 +72,19 @@
     white-space: nowrap;
 
     .txt {
-      font-size: 0.7em;
+      font-size: 0.8em;
       padding-top: 0.2em;
     }
 
     .value {
       display: inline-block;
-      font-size: 0.9em;
+      font-size: 1.1em;
     }
 
     .unit {
       display: inline-block;
       margin-left: 0.1em;
-      font-size: 0.6em;
+      font-size: 0.8em;
     }
   }
 
@@ -115,7 +115,7 @@
     height: 2em;
     width: 2em;
     margin-top: -0.9em;
-    background: skyblue;
+    background: lightseagreen;
     border-radius: 50%;
     border: 0.1em solid white;
   }

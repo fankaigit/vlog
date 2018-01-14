@@ -61,7 +61,7 @@
     }
 
     .positive {
-      background-color: $primary;
+      background-color: lightseagreen;
     }
 
     .today {
