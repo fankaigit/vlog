@@ -30,7 +30,7 @@
     methods: {
       saveRecord: function (hid, t) {
         let ele = document.getElementById(this.habit.name + t)
-        let val = ele ? ele.value : 0
+        let val = ele ? parseInt(ele.value) : 0
         log.info('save', this.habit.name, t, val)
         this.$store.commit('saveRecord', {hid: hid, key: t, value: val})
       },

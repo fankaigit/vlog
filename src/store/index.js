@@ -47,6 +47,13 @@ const mutations = {
   },
   update: function (state, source) {
     if (source !== null && source.updatedTime > state.data.updatedTime) {
+      // temporary, fix saved data
+      for (let h in source.records) {
+        for (let k in source.records[h]) {
+          source.records[h][k] = parseInt(source.records[h][k])
+        }
+      }
+
       Vue.set(state.data, 'habits', source.habits || {})
       Vue.set(state.data, 'records', source.records || {})
       state.data.updatedTime = source.updatedTime
