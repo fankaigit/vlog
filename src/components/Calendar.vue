@@ -12,7 +12,8 @@
         .cal-week-day(v-for="name in weekDayNames") {{name}}
       #cal-dates
         .cal-week(v-for="w in monthDates()")
-          .cal-week-day(v-for="d in w", :class="status(d)") {{d.date()}}
+          .cal-week-day(v-for="d in w", :class="status(d)")
+            span(@click="locate(d)") {{d.date()}}
 
 </template>
 
@@ -110,10 +111,9 @@
       },
       status: function (d) {
         let result = ''
-        if (d.month() !== this.startOfMonth.month()) {
+        if (d.month() !== this.startOfMonth.month() || d.unix() * 1000 > Date.now()) {
           result = `${result} inactive`
         }
-        log.info(this.checkStatus[d.unix()])
 
         if (this.checkStatus[d.unix()]) {
           result = `${result} positive`
@@ -122,6 +122,12 @@
           result = `${result} today`
         }
         return result
+      },
+      locate: function (d) {
+        if (d.unix() * 1000 < Date.now()) {
+          this.$store.commit('selectDate', d.unix() * 1000)
+          this.$router.push('/daily')
+        }
       }
     },
     created: function () {

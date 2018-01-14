@@ -15,7 +15,8 @@
 
     section#records
       .habit(v-for="(values, hid) in records")
-        .habit-name {{habits[hid].name}}
+        .habit-name
+          router-link(:to="`/stats/${hid}`") {{habits[hid].name}}
         .habit-records
           .habit-record.columns.is-mobile(v-for="(v, t) in values", v-if="habits[hid].type !== 'check'")
             .column
@@ -183,6 +184,10 @@
         width: 30%;
         text-align: center;
         font-size: 1.4rem;
+
+        a {
+          color: #4a4a4a;
+        }
       }
     }
   }

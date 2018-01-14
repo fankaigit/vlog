@@ -58,11 +58,15 @@ const mutations = {
   selectPrevDate: function (state) {
     log.info(state.startOfDate)
     state.startOfDate -= DateUtils.MILLIS_PER_DAY
-    log.info(state.startOfDate)
+    log.info('select', state.startOfDate)
   },
   selectNextDate: function (state) {
     state.startOfDate += DateUtils.MILLIS_PER_DAY
-    log.info(state.startOfDate)
+    log.info('select', state.startOfDate)
+  },
+  selectDate: function (state, t) {
+    state.startOfDate = t
+    log.info('select', state.startOfDate)
   }
 }
 
