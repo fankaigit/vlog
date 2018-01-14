@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view/>
+    <div id="main">
+      <router-view/>
+    </div>
 
     <div id="nav" class="navbar is-fixed-bottom bd-notification">
       <div>
@@ -36,7 +38,8 @@
     padding: 0px;
   }
 
-  #app {
+  #main {
+    margin-bottom: 4rem;
   }
 
   .hero {
