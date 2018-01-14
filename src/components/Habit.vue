@@ -6,13 +6,21 @@
 
     <section id="form">
 
-      <div class="select is-info ">
-        <select v-model="type">
-          <option v-for="(v, k) in types" :value="k">{{v}}</option>
-        </select>
+      <div class="field">
+        <div>
+          <label>活动类型</label>
+        </div>
+        <div class="select is-info ">
+          <select v-model="type">
+            <option v-for="(v, k) in types" :value="k">{{v}}</option>
+          </select>
+        </div>
       </div>
 
       <div class="field">
+        <div>
+          <label>活动名称</label>
+        </div>
         <input class="input is-primary " type="text" v-model="habit.name"
                placeholder="活动名称"/>
       </div>
@@ -73,15 +81,11 @@
 <style scoped>
 
   #header {
-    margin-bottom: 2em;
-  }
-
-  #form .select {
-    left: 1rem;
+    margin-bottom: 1em;
   }
 
   #form .field {
-    margin: 2rem 1rem;
+    margin: 1rem 1rem;
   }
 
   #form .columns {
@@ -112,6 +116,11 @@
   #actions #normal .button {
     flex-grow: 1;
     margin: 0.5rem;
+  }
+
+  input.input {
+    border-width: 1px;
+    padding-left: 0.4em;
   }
 
 </style>

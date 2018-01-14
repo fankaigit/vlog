@@ -10,7 +10,7 @@
     section#login(v-else)
       .field
         p.control.has-icons-left.has-icons-right
-          input.input(type="text", v-model="username", maxlength="20", placeholder="用户名")
+          input.input.is-primary(type="text", v-model="username", maxlength="20", placeholder="用户名")
           span.icon.is-small.is-left
             i.fa.fa-user
           span.icon.is-small.is-right(v-if="isValidUserName")
@@ -20,7 +20,7 @@
 
       .field
         p.control.has-icons-left.has-icons-right
-          input.input(type="password", v-model="password", maxlength="20", placeholder="密码")
+          input.input.is-warning(type="password", v-model="password", maxlength="20", placeholder="密码")
           span.icon.is-small.is-left
             i.fa.fa-lock
           span.icon.is-small.is-right(v-if="isValidPassword")
@@ -56,6 +56,11 @@
     height: 1.5em;
     overflow: hidden;
     color: red;
+  }
+
+  input.input {
+    border-width: 1px;
+    padding-left: 0.4em;
   }
 
 </style>
