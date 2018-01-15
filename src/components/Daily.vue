@@ -193,8 +193,9 @@
       .habit-name {
         vertical-align: middle;
         width: 30%;
-        text-align: center;
+        text-align: left;
         font-size: 1.4rem;
+        padding-left: 1em;
 
         a {
           color: #4a4a4a;
