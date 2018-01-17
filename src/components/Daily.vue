@@ -20,9 +20,9 @@
             .column
             .column.is-2.action(@click="addRecord(hid)")
               i.fa.fa-plus-circle
-          .habit-record.columns.is-mobile(v-if="editable && habits[hid].type === 'check'")
+          .habit-record.columns.is-mobile(v-if="habits[hid].type === 'check'")
             .column
-              .habit-check
+              .habit-check(:class="editable ? 'active' : 'inactive'")
                 i.fa.fa-check-square-o(@click="toggle(hid)", v-if="isChecked(hid)")
                 i.fa.fa-square-o(@click="toggle(hid)", v-else)
             .column.is-2
@@ -84,6 +84,9 @@
         return rs && k && rs[k] > 0
       },
       toggle: function (hid) {
+        if (!this.editable) {
+          return
+        }
         let val = !this.isChecked(hid)
         if (!this.firstKey(hid)) {
           this.addRecord(hid)
@@ -241,11 +244,25 @@
     color: gray;
   }
 
-  .fa-square-o {
-    color: gray;
+  .habit-check {
+    &.active {
+      .fa-square-o {
+        color: gray;
+      }
+
+      .fa-check-square-o {
+        color: lightseagreen;
+      }
+    }
+    &.inactive {
+      .fa-square-o {
+        color: lightgrey;
+      }
+
+      .fa-check-square-o {
+        color: lightgrey;
+      }
+    }
   }
 
-  .fa-check-square-o {
-    color: lightseagreen;
-  }
 </style>
