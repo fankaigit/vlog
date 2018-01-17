@@ -20,10 +20,12 @@
             .column
             .column.is-2.action(@click="addRecord(hid)")
               i.fa.fa-plus-circle
-          .habit-record(v-if="editable && habits[hid].type === 'check'")
-            .habit-check
-              i.fa.fa-check-square-o(@click="toggle(hid)", v-if="isChecked(hid)")
-              i.fa.fa-square-o(@click="toggle(hid)", v-else)
+          .habit-record.columns.is-mobile(v-if="editable && habits[hid].type === 'check'")
+            .column
+              .habit-check
+                i.fa.fa-check-square-o(@click="toggle(hid)", v-if="isChecked(hid)")
+                i.fa.fa-square-o(@click="toggle(hid)", v-else)
+            .column.is-2
 </template>
 
 <script>
@@ -218,8 +220,9 @@
         vertical-align: middle;
       }
 
-      .habit-check i {
-        margin: 0.3rem 0 0 4rem;
+      .habit-check {
+        text-align: center;
+        /*margin: 0.3rem 0 0 4rem;*/
       }
     }
   }

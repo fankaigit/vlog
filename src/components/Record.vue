@@ -1,44 +1,43 @@
 <template lang="pug">
   .record.columns.is-mobile
-    .slider-column.column.is-7
-      .tip(v-if="touched")
-        .txt(v-if="habit.values.length > 0") {{habit.values[v]}}
-        .txt(v-else) {{v}}
-      input.slider(:id="habit.name + t", type="range", :step="habit.step",
-        :min="habit.min", :max="habit.max", :value="v", @input="saveRecord(habit.id, t)",
-        @touchstart="onTouchStart()", @touchend="onTouchEnd()")
+    .left-column.column.is-3(:class="leftClass")
+      i.fa.fa-chevron-left(@click="minus()", v-if="habit.values.length > 0")
+      i.fa.fa-minus(@click="minus()", v-else)
     .txt-column.column
       .txt(v-if="habit.values.length > 0") {{habit.values[v]}}
       .txt(v-else)
-        .value {{v}}
-        .unit(v-if="habit.unit !== ''") {{habit.unit}}
+        span.value {{v}}
+        span.unit(v-if="habit.unit !== ''") {{habit.unit}}
+    .right-column.column.is-3(:class="rightClass")
+      i.fa.fa-chevron-right(@click="plus()", v-if="habit.values.length > 0")
+      i.fa.fa-plus(@click="plus()", v-else)
+
 </template>
 
 <script>
-  import DateUtils from '../utils/date'
-  import log from '../utils/log'
-
   export default {
     name: 'Record',
     props: ['habit', 't', 'v', 'values'],
-    data () {
-      return {
-        DateUtils: DateUtils,
-        touched: false
+    methods: {
+      minus: function () {
+        if (this.v <= 0) {
+          return
+        }
+        this.$store.commit('saveRecord', {hid: this.habit.id, key: this.t, value: this.v - 1})
+      },
+      plus: function () {
+        if (this.v >= this.habit.max) {
+          return
+        }
+        this.$store.commit('saveRecord', {hid: this.habit.id, key: this.t, value: this.v + 1})
       }
     },
-    methods: {
-      saveRecord: function (hid, t) {
-        let ele = document.getElementById(this.habit.name + t)
-        let val = ele ? parseInt(ele.value) : 0
-        log.info('save', this.habit.name, t, val)
-        this.$store.commit('saveRecord', {hid: hid, key: t, value: val})
+    computed: {
+      leftClass: function () {
+        return this.v > 0 ? 'active' : 'inactive'
       },
-      onTouchStart: function () {
-        this.touched = true
-      },
-      onTouchEnd: function () {
-        this.touched = false
+      rightClass: function () {
+        return this.v < this.habit.max ? 'active' : 'inactive'
       }
     }
   }
@@ -51,73 +50,50 @@
     margin: 0;
   }
 
-  .slider-column .tip {
-    width: 300%;
-    height: 0px;
-    position: relative;
-    bottom: 1em;
-    left: -100%;
-    line-height: 1em;
-    font-weight: bold;
-    font-size: 3em;
-    text-align: center;
-    color: rgba(0, 0, 0, 0.2);
+  i {
+    color: lightblue;
+    font-size: 0.7em;
   }
 
-  .txt-column {
+  .inactive i {
+    color: lightgrey;
+  }
+
+  .left-column {
+    text-align: right;
+  }
+
+  .right-column {
+    text-align: left;
+  }
+
+  .record {
     height: 1.3em;
     line-height: 1.3em;
     overflow: hidden;
-    padding-left: 0.5em;
+  }
+
+  .txt-column {
+    padding: 0;
+    margin: 0;
     white-space: nowrap;
 
     .txt {
       font-size: 0.8em;
-      padding-top: 0.2em;
+      text-align: center;
+      /*padding-top: 0.2em;*/
     }
 
     .value {
-      display: inline-block;
+      /*display: inline-block;*/
       font-size: 1.1em;
     }
 
     .unit {
-      display: inline-block;
+      /*display: inline-block;*/
       margin-left: 0.1em;
       font-size: 0.8em;
     }
-  }
-
-  .slider {
-    margin: 0;
-    padding: 0 0.5em;
-  }
-
-  input[type='range'] {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  input[type='range'],
-  input[type='range']::-webkit-slider-runnable-track,
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-  }
-
-  input[type='range']::-webkit-slider-runnable-track {
-    height: 0.3em;
-    background: lightgrey;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    position: relative;
-    height: 2em;
-    width: 2em;
-    margin-top: -0.9em;
-    background: lightseagreen;
-    border-radius: 50%;
-    border: 0.1em solid white;
   }
 
 </style>
