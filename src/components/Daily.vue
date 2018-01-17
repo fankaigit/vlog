@@ -1,19 +1,19 @@
 <template lang="pug">
   div
     section#header.hero.is-info.is-small
-      p.title {{DateUtils.formatDate($store.state.startOfDate)}}
+      p.title(@click="toggleEdit") {{DateUtils.formatDate($store.state.startOfDate)}}
 
     section#daily-date-nav
       date-nav(:data="navData")
 
     section#records
-      .habit(v-for="(values, hid) in records")
+      .habit(v-for="(values, hid) in records" v-show="editable || Object.keys(values) > 0")
         .habit-name
           router-link(:to="`/stats/${hid}`") {{habits[hid].name}}
         .habit-records
           .habit-record.columns.is-mobile(v-for="(v, t) in values", v-if="habits[hid].type !== 'check'")
             .column
-              record(:habit="habits[hid]", :t="t", :v="v", :values="values")
+              record(:habit="habits[hid]", :t="t", :v="v", :values="values", :editable="editable")
             .column.is-2.action(@click="delRecord(hid, t)", v-if="editable")
               i.fa.fa-minus-circle
           .habit-record.columns.is-mobile(v-if="editable && habits[hid].type !== 'check'")
@@ -43,7 +43,8 @@
     },
     data () {
       return {
-        DateUtils: DateUtils
+        DateUtils: DateUtils,
+        allowEdit: {}
       }
     },
     methods: {
@@ -89,6 +90,9 @@
         }
         let k = this.firstKey(hid)
         this.$store.commit('saveRecord', {hid: hid, key: k, value: val})
+      },
+      toggleEdit: function () {
+        Vue.set(this.allowEdit, this.$store.state.startOfDate, !this.allowEdit[this.$store.state.startOfDate])
       }
     },
     created: function () {
@@ -128,7 +132,8 @@
         return DateUtils.startOfToday() === this.$store.state.startOfDate
       },
       editable: function () {
-        return true // TODO
+        log.info(this.allowEdit[this.$store.state.startOfDate])
+        return this.isCurrentDateToday || this.allowEdit[this.$store.state.startOfDate]
       },
       navData: function () {
         let that = this
@@ -210,6 +215,9 @@
     font-size: 1.5rem;
 
     .habit-record {
+      height: 2.2rem;
+      line-height: 2.2rem;
+
       &:not(:last-child) {
         border-bottom: 1px solid whitesmoke;
         margin-bottom: 0.1rem;
@@ -222,7 +230,6 @@
 
       .habit-check {
         text-align: center;
-        /*margin: 0.3rem 0 0 4rem;*/
       }
     }
   }

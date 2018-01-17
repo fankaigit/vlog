@@ -17,7 +17,7 @@
 <script>
   export default {
     name: 'Record',
-    props: ['habit', 't', 'v', 'values'],
+    props: ['habit', 't', 'v', 'values', 'editable'],
     methods: {
       minus: function () {
         if (this.v <= 0) {
@@ -34,10 +34,10 @@
     },
     computed: {
       leftClass: function () {
-        return this.v > 0 ? 'active' : 'inactive'
+        return this.editable && this.v > 0 ? 'active' : 'inactive'
       },
       rightClass: function () {
-        return this.v < this.habit.max ? 'active' : 'inactive'
+        return this.editable && this.v < this.habit.max ? 'active' : 'inactive'
       }
     }
   }
@@ -68,8 +68,8 @@
   }
 
   .record {
-    height: 1.3em;
-    line-height: 1.3em;
+    height: 2.2rem;
+    line-height: 2.2rem;
     overflow: hidden;
   }
 
