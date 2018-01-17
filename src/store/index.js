@@ -47,10 +47,9 @@ const mutations = {
   },
   update: function (state, source) {
     if (source !== null && source.updatedTime > state.data.updatedTime) {
-      // temporary, fix saved data
       for (let h in source.records) {
         for (let k in source.records[h]) {
-          source.records[h][k] = parseInt(source.records[h][k])
+          source.records[h][k] = source.records[h][k]
         }
       }
 

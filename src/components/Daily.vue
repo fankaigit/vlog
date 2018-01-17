@@ -132,7 +132,6 @@
         return DateUtils.startOfToday() === this.$store.state.startOfDate
       },
       editable: function () {
-        log.info(this.allowEdit[this.$store.state.startOfDate])
         return this.isCurrentDateToday || this.allowEdit[this.$store.state.startOfDate]
       },
       navData: function () {
