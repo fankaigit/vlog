@@ -137,7 +137,8 @@
     step: 1,
     unit: '',
     values: [],
-    type: 'number'
+    type: 'number',
+    order: 100000
   }
 
   export default {
@@ -172,6 +173,7 @@
           h.values = []
         }
         h.id = h.id || Date.now()
+        h.order = Math.min(h.order, Object.keys(this.$store.state.data.habits).length - 1)
         log.info('save habit:', h)
         this.$store.commit('saveHabit', h)
         this.$router.go(-1)

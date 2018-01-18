@@ -4,7 +4,7 @@
       p.title 我的活动
 
     section#habits
-      .habit(v-for="(h, id) in habits", v-if="!h.deleted")
+      .habit(v-for="(h, idx) in habits")
         .habit-name {{h.name}}
         .habit-type
           span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'check'")
@@ -17,13 +17,15 @@
             i.fa.fa-square-o.fa-stack-2x
             i.fa.fa-star.fa-stack-1x
           =" "
-          span {{htypes[h.type]}}
+          span
+            router-link(:to="'/habits/' + h.id") {{htypes[h.type]}}
         .habit-stat
           router-link(:to="'/stats/' + h.id")
             i.fa.fa-bar-chart
-        .habit-config
-          router-link(:to="'/habits/' + h.id")
-            i.fa.fa-cog
+        .habit-up(@click="moveUp(idx)")
+          i.fa.fa-chevron-up(:class = "idx > 0 ? 'active' : 'inactive'")
+        .habit-down(@click="moveDown(idx)")
+           i.fa.fa-chevron-down(:class = "idx < habits.length - 1 ? 'active' : 'inactive'")
 
     section#actions
       router-link.button.is-primary(:to="'/habits/-1'") 新建一个活动
@@ -53,24 +55,38 @@
       width: 30%;
     }
 
+    .habit-type {
+      a {
+        color: black;
+      }
+    }
+
     .habit-icon {
-      /*width: 30%;*/
+      width: 30%;
       font-size: 50%;
       margin-bottom: 0.05rem;
       color: sandybrown;
+      text-align: right;
     }
 
     .habit-stat {
       width: 20%;
+      text-align: center;
       a {
         color: $primary;
       }
     }
 
-    .habit-config {
+    .habit-up, .habit-down {
       width: 10%;
-      a {
+      text-align: center;
+
+      .active {
         color: $info;
+      }
+
+      .inactive {
+        color: lightgrey;
       }
     }
   }
@@ -99,15 +115,59 @@
       select: function (h) {
         log.info(`select ${h.id} ${h.name}`)
         this.selected = h
+      },
+      moveUp: function (idx) {
+        let hs = this.habits
+        if (idx <= 0) {
+          return
+        }
+        let tmp = hs[idx].order
+        hs[idx].order = hs[idx - 1].order
+        hs[idx - 1].order = tmp
+        this.$store.commit('saveHabit', hs[idx])
+        this.$store.commit('saveHabit', hs[idx - 1])
+      },
+      moveDown: function (idx) {
+        let hs = this.habits
+        if (idx >= hs.length - 1) {
+          return
+        }
+        let tmp = hs[idx].order
+        hs[idx].order = hs[idx + 1].order
+        hs[idx + 1].order = tmp
+        this.$store.commit('saveHabit', hs[idx])
+        this.$store.commit('saveHabit', hs[idx + 1])
       }
     },
     created: function () {
       this.$store.dispatch('init')
+      // FIXME: temporary
+      let order = 0
+      log.info(JSON.stringify(this.$store.state.data.habits))
+      for (let hid in this.$store.state.data.habits) {
+        let h = this.$store.state.data.habits[hid]
+        if (h.order === undefined) {
+          h.order = order
+          this.$store.commit('saveHabit', h)
+          order += 1
+        } else {
+          break
+        }
+      }
     },
     computed: {
       habits: function () {
-        log.info('recalculate habits', JSON.stringify(this.$store.state))
-        return this.$store.state.data.habits
+        let hs = this.$store.state.data.habits
+        let keys = Object.keys(hs)
+        keys.sort((a, b) => hs[a].order - hs[b].order)
+        let result = []
+        for (let key of keys) {
+          if (!hs[key].deleted) {
+            result.push(hs[key])
+          }
+        }
+        log.info('recalculate habits - result', JSON.stringify(result))
+        return result
       }
     }
   }

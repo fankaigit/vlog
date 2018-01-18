@@ -112,7 +112,7 @@
         let records = this.$store.state.data.records
         let startOfDate = this.$store.state.startOfDate
         let endOfDate = startOfDate + DateUtils.MILLIS_PER_DAY
-        for (let hid in records) {
+        for (let hid in this.habits) {
           let vs = records[hid]
           let nv = {}
           for (let t in vs) {
@@ -129,7 +129,17 @@
         return ret
       },
       habits: function () {
-        return this.$store.state.data.habits
+        let hs = this.$store.state.data.habits
+        let keys = Object.keys(hs)
+        keys.sort((a, b) => hs[a].order - hs[b].order)
+        let result = {}
+        for (let key of keys) {
+          if (!hs[key].deleted) {
+            result[hs[key].id] = hs[key]
+          }
+        }
+        log.info('recalculate habits - result', JSON.stringify(result))
+        return result
       },
       isCurrentDateToday: function () {
         return DateUtils.startOfToday() === this.$store.state.startOfDate
