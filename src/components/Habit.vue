@@ -10,11 +10,13 @@
         <div>
           <label>活动类型</label>
         </div>
-        <div class="select is-info ">
+        <div class="select is-info">
           <select v-model="type">
             <option v-for="(v, k) in types" :value="k">{{v}}</option>
           </select>
         </div>
+        <a class="onetime button" :class="once ? 'is-info' : 'is-light'"
+            @click="toggleOnce()" v-if="type !== 'check'">每天一次</a>
       </div>
 
       <div class="field">
@@ -100,6 +102,12 @@
     font-size: 90%;
   }
 
+  #form .onetime {
+    margin-left: 4rem;
+    padding: 1rem;
+    border-width: 1px;
+  }
+
   #actions {
     margin: 2rem 1rem;
   }
@@ -128,6 +136,7 @@
 <script>
   import log from '../utils/log'
   import htypes from '../utils/htypes'
+  import Vue from 'vue'
 
   const template = {
     id: undefined,
@@ -138,7 +147,8 @@
     unit: '',
     values: [],
     type: 'number',
-    order: 100000
+    order: 100000,
+    once: false
   }
 
   export default {
@@ -169,6 +179,7 @@
           h.max = 1
           h.step = 1
           h.unit = ''
+          h.once = true
         } else {
           h.values = []
         }
@@ -187,6 +198,10 @@
         this.habit.deleted = true
         this.$store.commit('saveHabit', this.habit)
         this.$router.go(-1)
+      },
+      toggleOnce: function () {
+        Vue.set(this.habit, 'once', !this.habit.once)
+        this.habit = this.habit
       }
     },
     // only assign once on created
@@ -199,6 +214,11 @@
     },
     beforeDestroy: function () {
       log.info('destroy')
+    },
+    computed: {
+      once: function () {
+        return this.habit.once
+      }
     }
   }
 </script>

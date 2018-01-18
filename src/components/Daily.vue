@@ -16,7 +16,7 @@
               record(:habit="habits[hid]", :t="t", :v="v", :values="values", :editable="editable")
             .column.is-2.action(@click="delRecord(hid, t)", v-if="editable")
               i.fa.fa-minus-circle
-          .habit-record.columns.is-mobile(v-if="editable && habits[hid].type !== 'check'")
+          .habit-record.columns.is-mobile(v-if="editable && allowAdd(hid)")
             .column
             .column.is-2.action(@click="addRecord(hid)")
               i.fa.fa-plus-circle
@@ -96,6 +96,9 @@
       },
       toggleEdit: function () {
         Vue.set(this.allowEdit, this.$store.state.startOfDate, !this.allowEdit[this.$store.state.startOfDate])
+      },
+      allowAdd: function (hid) {
+        return this.habits[hid].type !== 'check' && (Object.keys(this.records[hid]).length === 0 || !this.habits[hid].once)
       }
     },
     created: function () {
@@ -213,7 +216,7 @@
         vertical-align: middle;
         width: 30%;
         text-align: left;
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         padding-left: 1em;
 
         a {
