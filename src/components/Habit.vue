@@ -187,6 +187,7 @@
         h.order = Math.min(h.order, Object.keys(this.$store.state.data.habits).length - 1)
         log.info('save habit:', h)
         this.$store.commit('saveHabit', h)
+        this.$store.commit('initHabitRecords', h.id)
         this.$router.go(-1)
       },
       cancel: function () {
