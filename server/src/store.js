@@ -12,7 +12,17 @@ const db = new sqlite3.Database(dbFile, (err) => {
 })
 
 process.on('SIGINT', function () {
-  log.error('Caught interrupt signal, will save data and exit!')
+  log.error('Caught SIGINT, will save data and exit!')
+  db.close((err) => {
+    if (err) {
+      log.error(`Error close ${dbFile}: `, err)
+    }
+    process.exit()
+  })
+})
+
+process.on('SIGTERM', function () {
+  log.error('Caught SIGTERM, will save data and exit!')
   db.close((err) => {
     if (err) {
       log.error(`Error close ${dbFile}: `, err)
