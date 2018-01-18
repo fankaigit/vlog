@@ -79,20 +79,20 @@
     white-space: nowrap;
 
     .txt {
-      font-size: 0.8em;
+      font-size: 1rem;
       text-align: center;
       /*padding-top: 0.2em;*/
     }
 
     .value {
       /*display: inline-block;*/
-      font-size: 1.1em;
+      font-size: 1.1rem;
     }
 
     .unit {
       /*display: inline-block;*/
-      margin-left: 0.1em;
-      font-size: 0.8em;
+      margin-left: 0.1rem;
+      font-size: 0.9em;
     }
   }
 
