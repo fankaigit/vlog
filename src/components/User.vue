@@ -4,7 +4,7 @@
       p.title {{ loggedIn ? '用户' : '登录/注册' }}
 
     section#user(v-if="loggedIn")
-      h3.field 用户：{{user.username}}
+      h3.field 欢迎, {{user.username}}！
       p.field.button.is-danger(@click="logout()") 退出登录
 
     section#login(v-else)
