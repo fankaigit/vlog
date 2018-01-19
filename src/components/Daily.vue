@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     section#header.hero.is-info.is-small
-      p.title(@click="toggleEdit") {{DateUtils.formatDate($store.state.startOfDate)}}
+      p.title {{DateUtils.formatDate($store.state.startOfDate)}}
 
     section#daily-date-nav
       date-nav(:data="navData")
@@ -29,6 +29,12 @@
                 i.fa.fa-check-square-o(@click="toggle(hid)", v-if="isChecked(hid)")
                 i.fa.fa-square-o(@click="toggle(hid)", v-else)
             .column.is-2
+
+    section#actions(v-if="!isCurrentDateToday")
+      .button.is-warning.is-fullwidth(@click="toggleEdit")
+        p(v-if="allowEdit") 完成
+        p(v-else) 编辑历史记录
+
 </template>
 
 <script>
@@ -47,7 +53,7 @@
     data () {
       return {
         DateUtils: DateUtils,
-        allowEdit: {}
+        allowEdit: false
       }
     },
     methods: {
@@ -98,7 +104,7 @@
         this.$store.commit('saveRecord', {hid: hid, key: k, value: val})
       },
       toggleEdit: function () {
-        Vue.set(this.allowEdit, this.$store.state.startOfDate, !this.allowEdit[this.$store.state.startOfDate])
+        this.allowEdit = !this.allowEdit
       },
       allowAdd: function (hid) {
         return this.habits[hid].type !== 'check' && (Object.keys(this.records[hid]).length === 0 || !this.habits[hid].once)
@@ -151,7 +157,7 @@
         return DateUtils.startOfToday() === this.$store.state.startOfDate
       },
       editable: function () {
-        return this.isCurrentDateToday || this.allowEdit[this.$store.state.startOfDate]
+        return this.isCurrentDateToday || this.allowEdit
       },
       navData: function () {
         let that = this
@@ -287,6 +293,10 @@
         color: lightgrey;
       }
     }
+  }
+
+  #actions {
+    margin: 1rem;
   }
 
 </style>
