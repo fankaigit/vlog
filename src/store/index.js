@@ -15,7 +15,8 @@ const state = {
   },
   inited: false,
   user: null,
-  startOfDate: null
+  startOfDate: null,
+  loggedOut: true
 }
 
 log.info(JSON.stringify(state))
@@ -99,6 +100,7 @@ const actions = {
   },
   register: function (context, data) {
     log.info('register')
+    context.state.loggedOut = false
     const url = appConfig.urls.register
     axios.post(url, data).then(
       (response) => onLoggedIn(context, response),
@@ -107,6 +109,7 @@ const actions = {
   },
   login: function (context, data) {
     log.info('login')
+    context.state.loggedOut = false
     const url = appConfig.urls.login
     axios.post(url, data).then(
       (response) => onLoggedIn(context, response),
@@ -134,7 +137,7 @@ export default new Vuex.Store({
 })
 
 function clear (context) {
-  context.state.loggedIn = false
+  context.state.loggedOut = true
   context.state.user = null
   context.state.data = {
     habits: {},
@@ -146,7 +149,7 @@ function clear (context) {
 
 function onLoggedIn (context, response) {
   log.info('login status:', response.data)
-  context.state.loggedIn = true
+  context.state.loggedOut = false
   context.state.user = response.data
   loadRemote(context)
 }
@@ -154,7 +157,7 @@ function onLoggedIn (context, response) {
 function onNotLoggedIn (context, err) {
   if (err.response.status === 401) {
     log.info('not logged in')
-    context.state.loggedIn = false
+    context.state.loggedOut = true
     context.state.user = null
   } else {
     log.error('fail to connect to server:', err)
@@ -209,7 +212,7 @@ function saveLocal (state) {
 }
 
 function saveRemote (state) {
-  if (!state.loggedIn) {
+  if (!state.user) {
     log.info('not logged in, skip')
     return
   }

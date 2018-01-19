@@ -128,11 +128,14 @@
       loggedIn: function () {
         return this.$store.getters.loggedIn
       },
+      loggedOut: function () {
+        return this.$store.state.loggedOut
+      },
       user: function () {
         return this.$store.state.user
       },
       actionNotice: function () {
-        if (!this.loggedIn) {
+        if (this.loggedOut) {
           if (this.lastAction === 'login') {
             return '登录失败'
           } else if (this.lastAction === 'register') {
