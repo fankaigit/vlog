@@ -25,7 +25,7 @@ app.use(koaBody({
 // auth
 const session = require('koa-session')
 app.keys = ['yet-to-set-a-better-secret']
-app.use(session({renew: true, maxAge: 864000000}, app))
+app.use(session({renew: true, maxAge: 'session'}, app))
 
 const auth = require('./auth')
 app.use(auth.passport.initialize())
