@@ -9,6 +9,9 @@
     section#records
       .habit(v-for="(values, hid) in records" v-show="editable || Object.keys(values) > 0")
         .habit-name
+          i.fa.fa-calendar-check-o(v-if="habits[hid].type === 'check'")
+          i.fa.fa-bar-chart(v-else)
+          =" "
           router-link(:to="`/stats/${hid}`") {{habits[hid].name}}
         .habit-records
           .habit-record.columns.is-mobile(v-for="(v, t) in values", v-if="habits[hid].type !== 'check'")
@@ -214,13 +217,18 @@
 
       .habit-name {
         vertical-align: middle;
-        width: 30%;
+        width: 40%;
         text-align: left;
         font-size: 1.2rem;
-        padding-left: 1em;
+        padding-left: 0.5em;
 
         a {
           color: #4a4a4a;
+        }
+
+        i {
+          color: rgba(32, 156, 238, 0.6);
+          font-size: 80%;
         }
       }
     }
