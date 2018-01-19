@@ -20,13 +20,13 @@
     props: ['habit', 't', 'v', 'values', 'editable'],
     methods: {
       minus: function () {
-        if (this.v <= 0) {
+        if (!this.editable || this.v <= 0) {
           return
         }
         this.$store.commit('saveRecord', {hid: this.habit.id, key: this.t, value: this.v - 1})
       },
       plus: function () {
-        if (this.v >= this.habit.max) {
+        if (!this.editable || this.v >= this.habit.max) {
           return
         }
         this.$store.commit('saveRecord', {hid: this.habit.id, key: this.t, value: this.v + 1})
