@@ -11,6 +11,8 @@
           .cal-week-day(v-for="d in w", :class="status(d)")
             span(@click="locate(d)") {{d.date()}}
 
+    #tip(style="margin: 2rem") 点击日期可跳转到记录页面
+
 </template>
 
 <style lang="scss" scoped>
@@ -35,7 +37,7 @@
     }
 
     .positive {
-      background-color: lightseagreen;
+      background-color: $primary;
     }
 
     .today {

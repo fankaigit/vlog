@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     section#stats-header.hero.is-info.is-small
-      p.title 活动数据
+      p.title 活动数据 - {{habit.name}}
 
     section#stats-calendar(v-if="habit.type === 'check'")
       cal(:habit="habit")

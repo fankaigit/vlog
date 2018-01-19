@@ -17,8 +17,8 @@
           .habit-record.columns.is-mobile(v-for="(v, t) in values", v-if="habits[hid].type !== 'check'")
             .column
               record(:habit="habits[hid]", :t="t", :v="v", :values="values", :editable="editable")
-            .column.is-2.action(@click="delRecord(hid, t)", v-if="editable")
-              i.fa.fa-minus-circle
+            .column.is-2.action
+              i.fa.fa-minus-circle(@click="delRecord(hid, t)", v-if="editable")
           .habit-record.columns.is-mobile(v-if="editable && allowAdd(hid)")
             .column
             .column.is-2.action(@click="addRecord(hid)")
@@ -204,8 +204,10 @@
 
   #records {
     display: table;
-    width: 100%;
-    margin: 1rem auto 0;
+    width: 95%;
+    margin: 0.5rem auto 0;
+    border-collapse: separate;
+    border-spacing: 0 0.3rem;
 
     .habit {
       display: table-row;
@@ -219,8 +221,9 @@
         vertical-align: middle;
         width: 40%;
         text-align: left;
-        font-size: 1.2rem;
-        padding-left: 0.5em;
+        font-size: 1.1rem;
+        padding-left: 0.5rem;
+        line-height: 2rem;
 
         a {
           color: #4a4a4a;

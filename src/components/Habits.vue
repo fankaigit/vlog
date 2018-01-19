@@ -5,8 +5,7 @@
 
     section#habits
       .habit(v-for="(h, idx) in habits")
-        .habit-name {{h.name}}
-        .habit-type
+        .habit-name
           span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'check'")
             i.fa.fa-square-o.fa-stack-2x
             i.fa.fa-check.fa-stack-1x
@@ -17,15 +16,18 @@
             i.fa.fa-square-o.fa-stack-2x
             i.fa.fa-star.fa-stack-1x
           =" "
-          span
-            router-link(:to="'/habits/' + h.id") {{htypes[h.type]}}
+          span {{h.name}}
+        .habit-config
+          router-link(:to="'/habits/' + h.id")
+            i.fa.fa-cog
         .habit-stat
           router-link(:to="'/stats/' + h.id")
-            i.fa.fa-bar-chart
+            i.fa.fa-calendar-check-o(v-if="h.type === 'check'")
+            i.fa.fa-bar-chart(v-else)
         .habit-up(@click="moveUp(idx)")
           i.fa.fa-chevron-up(:class = "idx > 0 ? 'active' : 'inactive'")
         .habit-down(@click="moveDown(idx)")
-           i.fa.fa-chevron-down(:class = "idx < habits.length - 1 ? 'active' : 'inactive'")
+          i.fa.fa-chevron-down(:class = "idx < habits.length - 1 ? 'active' : 'inactive'")
 
     section#actions
       router-link.button.is-primary(:to="'/habits/-1'") 新建一个活动
@@ -46,23 +48,17 @@
 
     & > * {
       display: table-cell;
-      padding-top: 1em;
+      padding-top: 1rem;
       border-bottom: 1px solid lightblue;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
 
     .habit-name {
-      width: 30%;
-    }
-
-    .habit-type {
-      a {
-        color: black;
-      }
+      width: 45%;
     }
 
     .habit-icon {
-      width: 30%;
+      /*width: 30%;*/
       font-size: 50%;
       margin-bottom: 0.05rem;
       color: sandybrown;
@@ -76,13 +72,20 @@
         color: $primary;
       }
     }
+    .habit-config {
+      width: 15%;
+      text-align: center;
+      a {
+        color: $info;
+      }
+    }
 
     .habit-up, .habit-down {
       width: 10%;
       text-align: center;
 
       .active {
-        color: $info;
+        color: skyblue;
       }
 
       .inactive {

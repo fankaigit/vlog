@@ -69,15 +69,12 @@
       },
       chartOptions: function () {
         let h = this.habit
-        if (h.type === 'number') {
-          return {}
-        }
         let ticks = {
           min: 0,
-          max: h.values.length + 0.5,
+          max: h.type === 'number' ? h.max : h.values.length + 0.5,
           stepSize: 1,
           callback: function (label) {
-            return label === 0 ? '' : h.values[label - 1]
+            return h.type === 'number' ? label : label === 0 ? '' : h.values[label - 1]
           }
         }
         return {
@@ -95,7 +92,7 @@
           label: this.habit.name + (this.habit.unit ? `(${this.habit.unit})` : ''),
           yLabels: this.habit.values,
           data: ds.map(d => this.values[d.unix()]),
-          backgroundColor: 'lightseagreen'
+          backgroundColor: 'rgb(0, 209, 178)'
         }]
         log.info('data:', datasets)
         return {
