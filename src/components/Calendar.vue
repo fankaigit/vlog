@@ -8,8 +8,8 @@
         .cal-week-day(v-for="name in weekDayNames") {{name}}
       #cal-dates
         .cal-week(v-for="w in monthDates()")
-          .cal-week-day(v-for="d in w", :class="status(d)")
-            span(@click="locate(d)") {{d.date()}}
+          .cal-week-day(v-for="d in w", :class="getDateClass(d)")
+            span(@click="jumpToDaily(d)") {{d.date()}}
 
     #tip(style="margin: 2rem") 点击日期可跳转到记录页面
 
@@ -66,7 +66,6 @@
     },
     data () {
       return {
-        DateUtils: DateUtils,
         startOfMonth: undefined,
         checkStatus: {}
       }
@@ -90,7 +89,7 @@
       monthTitle: function () {
         return this.startOfMonth.format('YYYY年MM月')
       },
-      status: function (d) {
+      getDateClass: function (d) {
         let result = ''
         if (d.month() !== this.startOfMonth.month() || d.unix() * 1000 > Date.now()) {
           result = `${result} inactive`
@@ -104,7 +103,8 @@
         }
         return result
       },
-      locate: function (d) {
+      jumpToDaily: function (d) {
+        // don't jump to future
         if (d.unix() * 1000 < Date.now()) {
           this.$store.commit(types.MUT_SELECT_DATE, d.unix() * 1000)
           this.$router.push('/daily')
@@ -112,7 +112,6 @@
       }
     },
     created: function () {
-      log.info('created')
       this.startOfMonth = moment().startOf('month')
       let records = this.$store.state.data.records[this.habit.id]
       for (let k in records) {
@@ -120,7 +119,6 @@
         // should not have more than 1 value per day
         this.checkStatus[moment(t).startOf('day').unix()] = records[t]
       }
-      log.info(JSON.stringify(this.checkStatus))
     },
     computed: {
       weekDayNames: function () {
