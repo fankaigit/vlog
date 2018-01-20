@@ -4,7 +4,7 @@
       i.fa.fa-chevron-left(@click="minus()", v-if="habit.values.length > 0")
       i.fa.fa-minus(@click="minus()", v-else)
     .txt-column.column
-      .txt(v-if="habit.values.length > 0") {{habit.values[v]}}
+      .txt(v-if="habit.values.length > 0") {{habit.values[value]}}
       .txt(v-else)
         span.value {{value}}
         span.unit(v-if="habit.unit !== ''") {{habit.unit}}
@@ -19,7 +19,7 @@
 
   export default {
     name: 'RangeRecord',
-    props: ['habit', 't', 'value', 'editable'],
+    props: ['habit', 't', 'value', 'value', 'editable'],
     methods: {
       minus: function () {
         if (!this.editable || this.value <= 0) {

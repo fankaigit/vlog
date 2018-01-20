@@ -72,6 +72,7 @@
         color: $primary;
       }
     }
+
     .habit-config {
       width: 15%;
       text-align: center;
@@ -104,59 +105,34 @@
 
 <script>
   import log from '../utils/log'
-  import htypes from '../utils/htypes'
   import types from '../store/types'
 
   export default {
     name: 'Habits',
-    data () {
-      return {
-        selected: undefined,
-        htypes: htypes
-      }
-    },
     methods: {
       select: function (h) {
         log.info(`select ${h.id} ${h.name}`)
         this.selected = h
       },
-      moveUp: function (idx) {
+      swap: function (a, b) {
         let hs = this.habits
-        if (idx <= 0) {
+        if (a < 0 || b > hs.length - 1) {
           return
         }
-        let tmp = hs[idx].order
-        hs[idx].order = hs[idx - 1].order
-        hs[idx - 1].order = tmp
-        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx])
-        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx - 1])
+        let tmp = hs[a].order
+        hs[a].order = hs[b].order
+        hs[b].order = tmp
+        this.$store.commit(types.MUT_SAVE_HABIT, hs[a])
+        this.$store.commit(types.MUT_SAVE_HABIT, hs[b])
+      },
+      moveUp: function (idx) {
+        this.swap(idx - 1, idx)
       },
       moveDown: function (idx) {
-        let hs = this.habits
-        if (idx >= hs.length - 1) {
-          return
-        }
-        let tmp = hs[idx].order
-        hs[idx].order = hs[idx + 1].order
-        hs[idx + 1].order = tmp
-        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx])
-        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx + 1])
+        this.swap(idx, idx + 1)
       }
     },
     created: function () {
-      // FIXME: temporary
-      let order = 0
-      log.info(JSON.stringify(this.$store.state.data.habits))
-      for (let hid in this.$store.state.data.habits) {
-        let h = this.$store.state.data.habits[hid]
-        if (h.order === undefined) {
-          h.order = order
-          this.$store.commit(types.MUT_SAVE_HABIT, h)
-          order += 1
-        } else {
-          break
-        }
-      }
     },
     computed: {
       habits: function () {
@@ -169,7 +145,7 @@
             result.push(hs[key])
           }
         }
-        log.info('recalculate habits - result', JSON.stringify(result))
+//        log.info('recalculate habits - result', JSON.stringify(result))
         return result
       }
     }

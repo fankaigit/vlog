@@ -9,7 +9,7 @@
 
   export default {
     name: 'CheckRecord',
-    props: ['habit', 'records', 'editable'],
+    props: ['habit', 'records', 'editable', 'add'],
     methods: {
       firstKey: function () {
         let keys = Object.keys(this.records)
@@ -30,7 +30,7 @@
         let hid = this.habit.id
         let val = !this.isChecked(hid)
         if (!this.firstKey(hid)) {
-          this.addRecord(hid)
+          this.add(hid)
         }
         let k = this.firstKey(hid)
         this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: hid, key: k, value: val})

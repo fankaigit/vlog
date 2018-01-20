@@ -7,7 +7,7 @@
       date-nav(:data="navData")
 
     section#records
-      .habit(v-for="(values, hid) in records" v-show="editable || Object.keys(values) > 0")
+      .habit(v-for="(values, hid) in records" v-show="editable || Object.keys(values).length > 0")
         .habit-name
           i.fa.fa-calendar-check-o(v-if="habits[hid].type === 'check'")
           i.fa.fa-bar-chart(v-else)
@@ -21,7 +21,7 @@
               i.fa.fa-minus-circle(@click="delRecord(hid, t)", v-if="editable")
           .habit-record.columns.is-mobile(v-if="habits[hid].type === 'check'")
             .column
-              check-record(:habit="habits[hid]", :records="values", :editable="editable")
+              check-record(:habit="habits[hid]", :records="values", :add="addRecord", :editable="editable")
             .column.is-2
           .habit-record.columns.is-mobile(v-if="editable && allowAdd(hid)")
             .column
