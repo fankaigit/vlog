@@ -6,7 +6,7 @@
     .txt-column.column
       .txt(v-if="habit.values.length > 0") {{habit.values[v]}}
       .txt(v-else)
-        span.value {{v}}
+        span.value {{value}}
         span.unit(v-if="habit.unit !== ''") {{habit.unit}}
     .right-column.column.is-3(:class="rightClass")
       i.fa.fa-chevron-right(@click="plus()", v-if="habit.values.length > 0")
@@ -18,28 +18,28 @@
   import types from '../store/types'
 
   export default {
-    name: 'Record',
-    props: ['habit', 't', 'v', 'values', 'editable'],
+    name: 'RangeRecord',
+    props: ['habit', 't', 'value', 'editable'],
     methods: {
       minus: function () {
-        if (!this.editable || this.v <= 0) {
+        if (!this.editable || this.value <= 0) {
           return
         }
-        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: this.habit.id, key: this.t, value: this.v - 1})
+        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: this.habit.id, key: this.t, value: this.value - 1})
       },
       plus: function () {
-        if (!this.editable || this.v >= this.habit.max) {
+        if (!this.editable || this.value >= this.habit.max) {
           return
         }
-        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: this.habit.id, key: this.t, value: this.v + 1})
+        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: this.habit.id, key: this.t, value: this.value + 1})
       }
     },
     computed: {
       leftClass: function () {
-        return this.editable && this.v > 0 ? 'active' : 'inactive'
+        return this.editable && this.value > 0 ? 'active' : 'inactive'
       },
       rightClass: function () {
-        return this.editable && this.v < this.habit.max ? 'active' : 'inactive'
+        return this.editable && this.value < this.habit.max ? 'active' : 'inactive'
       }
     }
   }
@@ -83,7 +83,6 @@
     .txt {
       font-size: 1rem;
       text-align: center;
-      /*padding-top: 0.2em;*/
     }
 
     .value {

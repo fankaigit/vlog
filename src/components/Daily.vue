@@ -16,19 +16,17 @@
         .habit-records
           .habit-record.columns.is-mobile(v-for="(v, t) in values", v-if="habits[hid].type !== 'check'")
             .column
-              record(:habit="habits[hid]", :t="t", :v="v", :values="values", :editable="editable")
+              range-record(:habit="habits[hid]", :t="t", :value="v", :values="values", :editable="editable")
             .column.is-2.action
               i.fa.fa-minus-circle(@click="delRecord(hid, t)", v-if="editable")
+          .habit-record.columns.is-mobile(v-if="habits[hid].type === 'check'")
+            .column
+              check-record(:habit="habits[hid]", :records="values", :editable="editable")
+            .column.is-2
           .habit-record.columns.is-mobile(v-if="editable && allowAdd(hid)")
             .column
             .column.is-2.action(@click="addRecord(hid)")
               i.fa.fa-plus-circle
-          .habit-record.columns.is-mobile(v-if="habits[hid].type === 'check'")
-            .column
-              .habit-check(:class="editable ? 'active' : 'inactive'")
-                i.fa.fa-check-square-o(@click="toggle(hid)", v-if="isChecked(hid)")
-                i.fa.fa-square-o(@click="toggle(hid)", v-else)
-            .column.is-2
 
     section#actions(v-if="!isCurrentDateToday")
       .button.is-warning.is-fullwidth(@click="toggleEdit")
@@ -41,7 +39,8 @@
   import Vue from 'vue'
   import DateUtils from '../utils/date'
   import log from '../utils/log'
-  import Record from './Record.vue'
+  import RangeRecord from './RangeRecord.vue'
+  import CheckRecord from './CheckRecord.vue'
   import DateNav from './DateNav.vue'
   import types from '../store/types'
   import { mapState } from 'vuex'
@@ -49,7 +48,8 @@
   export default {
     name: 'Daily',
     components: {
-      record: Record,
+      rangeRecord: RangeRecord,
+      checkRecord: CheckRecord,
       dateNav: DateNav
     },
     data () {
@@ -72,39 +72,6 @@
       delRecord: function (hid, key) {
         this.$store.dispatch(types.ACT_DEL_RECORD, {hid: hid, key: key})
       },
-      selectPrevDate: function () {
-        this.$store.commit(types.MUT_SELECT_PREVIOUS)
-      },
-      selectNextDate: function () {
-        this.$store.commit(types.MUT_SELECT_NEXT)
-      },
-      firstKey: function (hid) {
-        let rs = this.records[hid]
-        if (!rs) {
-          return null
-        }
-        let keys = Object.keys(rs)
-        if (keys.length === 0) {
-          return null
-        }
-        return keys[0]
-      },
-      isChecked: function (hid) {
-        let rs = this.records[hid]
-        let k = this.firstKey(hid)
-        return rs && k && rs[k]
-      },
-      toggle: function (hid) {
-        if (!this.editable) {
-          return
-        }
-        let val = !this.isChecked(hid)
-        if (!this.firstKey(hid)) {
-          this.addRecord(hid)
-        }
-        let k = this.firstKey(hid)
-        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: hid, key: k, value: val})
-      },
       toggleEdit: function () {
         this.allowEdit = !this.allowEdit
       },
@@ -124,25 +91,24 @@
         startOfDate: state => state.daily.startOfDate
       }),
       records: function () {
-        let ret = {}
-        let records = this.$store.state.data.records
+        let result = {}
+        let all = this.$store.state.data.records
         let startOfDate = this.startOfDate
         let endOfDate = startOfDate + DateUtils.MILLIS_PER_DAY
         for (let hid in this.habits) {
-          let vs = records[hid]
-          let nv = {}
-          for (let t in vs) {
+          let habitRecords = all[hid]
+          let activeRecords = {}
+          for (let t in habitRecords) {
             if (t > startOfDate && t < endOfDate) {
-              nv[t] = vs[t]
+              activeRecords[t] = habitRecords[t]
             }
           }
           let h = this.habits[hid]
-          if ((h && !h.deleted) || Object.keys(nv).length > 0) {
-            ret[hid] = nv
+          if ((h && !h.deleted) || Object.keys(activeRecords).length > 0) {
+            result[hid] = activeRecords
           }
         }
-        log.info('display records:', ret)
-        return ret
+        return result
       },
       habits: function () {
         let hs = this.$store.state.data.habits
@@ -154,7 +120,6 @@
             result[hs[key].id] = hs[key]
           }
         }
-        log.info('recalculate habits - result', JSON.stringify(result))
         return result
       },
       isCurrentDateToday: function () {
@@ -166,8 +131,12 @@
       navData: function () {
         let that = this
         return {
-          goPrev: that.selectPrevDate,
-          goNext: that.selectNextDate,
+          goPrev: function () {
+            that.$store.commit(types.MUT_SELECT_PREVIOUS)
+          },
+          goNext: function () {
+            that.$store.commit(types.MUT_SELECT_NEXT)
+          },
           title: DateUtils.dayOfWeek(that.startOfDate),
           prev: DateUtils.dayOfWeek(DateUtils.prevDate(that.startOfDate)),
           next: DateUtils.dayOfWeek(DateUtils.nextDate(that.startOfDate)),
@@ -263,11 +232,11 @@
         text-align: center;
         vertical-align: middle;
       }
-
-      .habit-check {
-        text-align: center;
-      }
     }
+  }
+
+  #actions {
+    margin: 1rem;
   }
 
   .fa-minus-circle {
@@ -277,30 +246,4 @@
   .fa-plus-circle {
     color: gray;
   }
-
-  .habit-check {
-    &.active {
-      .fa-square-o {
-        color: gray;
-      }
-
-      .fa-check-square-o {
-        color: lightseagreen;
-      }
-    }
-    &.inactive {
-      .fa-square-o {
-        color: lightgrey;
-      }
-
-      .fa-check-square-o {
-        color: lightgrey;
-      }
-    }
-  }
-
-  #actions {
-    margin: 1rem;
-  }
-
 </style>
