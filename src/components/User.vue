@@ -7,7 +7,7 @@
       h3.field 欢迎, {{user.username}}！
       p.field.button.is-danger(@click="logout()") 退出登录
 
-    section#login(v-else)
+    section#input(v-if="!loggedIn")
       .field
         p.control.has-icons-left.has-icons-right
           input.input.is-primary(type="text", v-model="username", maxlength="20", placeholder="用户名")
@@ -28,14 +28,29 @@
         .notice
           p(v-if="password !== '' && !isValidPassword") 密码必须包含字母和数字，6-20个字符
 
+    section#register(v-if="!loggedIn && !login")
+      .field
+        .button.is-primary(@click="register()") 注册
+        .switch(@click="login=true") 直接登录
+
+    section#login(v-if="!loggedIn && login")
       .field
         .button.is-success(@click="login()") 登录
-        .button.is-warning(@click="register()") 注册
+        .switch(@click="login=false") 我要注册
+
+
+    section#notice(v-if="!loggedIn")
+      .field
         .notice
           p(style="text-align: center") {{actionNotice}}
+        .help
+          p 不登录可以直接试用，但数据只在当前回话中有效，重启浏览器后可能丢失。
+          p 登录后记录会上传到服务器，可以在多个设备使用。
+
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+  @import "../assets/main.scss";
 
   #header {
     margin-bottom: 2em;
@@ -63,6 +78,13 @@
     padding-left: 0.4em;
   }
 
+  .switch {
+    width: 100%;
+    text-align: center;
+    font-size: 90%;
+    color: $info;
+  }
+
 </style>
 
 <script>
@@ -74,7 +96,8 @@
       return {
         username: '',
         password: '',
-        lastAction: null
+        lastAction: null,
+        login: true
       }
     },
     methods: {
