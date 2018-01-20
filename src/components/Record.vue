@@ -15,6 +15,8 @@
 </template>
 
 <script>
+  import types from '../store/types'
+
   export default {
     name: 'Record',
     props: ['habit', 't', 'v', 'values', 'editable'],
@@ -23,13 +25,13 @@
         if (!this.editable || this.v <= 0) {
           return
         }
-        this.$store.commit('saveRecord', {hid: this.habit.id, key: this.t, value: this.v - 1})
+        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: this.habit.id, key: this.t, value: this.v - 1})
       },
       plus: function () {
         if (!this.editable || this.v >= this.habit.max) {
           return
         }
-        this.$store.commit('saveRecord', {hid: this.habit.id, key: this.t, value: this.v + 1})
+        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: this.habit.id, key: this.t, value: this.v + 1})
       }
     },
     computed: {

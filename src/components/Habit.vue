@@ -137,6 +137,7 @@
   import log from '../utils/log'
   import htypes from '../utils/htypes'
   import Vue from 'vue'
+  import types from '../store/types'
 
   const template = {
     id: undefined,
@@ -186,8 +187,7 @@
         h.id = h.id || Date.now()
         h.order = Math.min(h.order, Object.keys(this.$store.state.data.habits).length - 1)
         log.info('save habit:', h)
-        this.$store.commit('saveHabit', h)
-        this.$store.commit('initHabitRecords', h.id)
+        this.$store.dispatch(types.ACT_SAVE_HABIT, h)
         this.$router.go(-1)
       },
       cancel: function () {
@@ -197,7 +197,7 @@
       remove: function () {
         log.info('remove habit')
         this.habit.deleted = true
-        this.$store.commit('saveHabit', this.habit)
+        this.$store.dispatch(types.ACT_SAVE_HABIT, this.habit)
         this.$router.go(-1)
       },
       toggleOnce: function () {
@@ -207,7 +207,6 @@
     },
     // only assign once on created
     created: function () {
-      this.$store.dispatch('init')
       let hid = this.$route.params.hid
       this.habit = this.$store.state.data.habits[hid] || JSON.parse(JSON.stringify(template))
       this.hvalues = this.habit.values.join(' ')

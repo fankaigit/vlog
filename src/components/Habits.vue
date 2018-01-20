@@ -105,6 +105,7 @@
 <script>
   import log from '../utils/log'
   import htypes from '../utils/htypes'
+  import types from '../store/types'
 
   export default {
     name: 'Habits',
@@ -127,8 +128,8 @@
         let tmp = hs[idx].order
         hs[idx].order = hs[idx - 1].order
         hs[idx - 1].order = tmp
-        this.$store.commit('saveHabit', hs[idx])
-        this.$store.commit('saveHabit', hs[idx - 1])
+        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx])
+        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx - 1])
       },
       moveDown: function (idx) {
         let hs = this.habits
@@ -138,12 +139,11 @@
         let tmp = hs[idx].order
         hs[idx].order = hs[idx + 1].order
         hs[idx + 1].order = tmp
-        this.$store.commit('saveHabit', hs[idx])
-        this.$store.commit('saveHabit', hs[idx + 1])
+        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx])
+        this.$store.commit(types.MUT_SAVE_HABIT, hs[idx + 1])
       }
     },
     created: function () {
-      this.$store.dispatch('init')
       // FIXME: temporary
       let order = 0
       log.info(JSON.stringify(this.$store.state.data.habits))
@@ -151,7 +151,7 @@
         let h = this.$store.state.data.habits[hid]
         if (h.order === undefined) {
           h.order = order
-          this.$store.commit('saveHabit', h)
+          this.$store.commit(types.MUT_SAVE_HABIT, h)
           order += 1
         } else {
           break

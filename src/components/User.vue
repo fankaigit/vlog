@@ -31,18 +31,17 @@
     section#register(v-if="!loggedIn && !registered")
       .field
         .button.is-primary(@click="register()") 注册
-        .switch(@click="login = true;lastAction = null") 直接登录
+        .switch(@click="switchRegistered(true)") 直接登录
 
     section#login(v-if="!loggedIn && registered")
       .field
         .button.is-success(@click="login()") 登录
-        .switch(@click="login = false;lastAction = null") 我要注册
-
+        .switch(@click="switchRegistered(false)") 我要注册
 
     section#notice(v-if="!loggedIn")
       .field
         .notice
-          p(style="text-align: center") {{actionNotice}}
+          p(style="text-align: center") {{failureTip}}
         .help
           p 不登录可以直接试用，但数据只在当前回话中有效，重启浏览器后可能丢失。
           p 登录后记录会上传到服务器，可以在多个设备使用。
@@ -89,6 +88,8 @@
 
 <script>
   import shajs from 'sha.js'
+  import types from '../store/types'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'User',
@@ -96,7 +97,7 @@
       return {
         username: '',
         password: '',
-        lastAction: null,
+        action: null,
         registered: true
       }
     },
@@ -108,63 +109,60 @@
         if (!this.validInput()) {
           return
         }
-        this.lastAction = 'register'
+        this.action = 'register'
         const data = {
           username: this.username,
           password: this.hashedPassword()
         }
         this.password = ''
-        this.$store.dispatch('register', data)
+        this.$store.dispatch(types.ACT_REGISTER, data)
       },
       login: function () {
         if (!this.validInput()) {
           return
         }
-        this.lastAction = 'login'
+        this.action = 'login'
         const data = {
           username: this.username,
           password: this.hashedPassword()
         }
         this.password = ''
-        this.$store.dispatch('login', data)
+        this.$store.dispatch(types.ACT_LOGIN, data)
       },
       logout: function () {
-        this.lastAction = 'logout'
-        this.$store.dispatch('logout')
+        this.action = 'logout'
+        this.$store.dispatch(types.ACT_LOGOUT)
       },
       hashedPassword: function () {
         return shajs('sha256').update(this.password).digest('hex')
       },
       debug: function () {
-        this.$store.commit('debug')
+        this.$store.commit(types.MUT_DEBUG)
+      },
+      switchRegistered: function (registered) {
+        this.registered = registered
+        this.action = null
       }
-    },
-    created: function () {
-      this.$store.dispatch('init')
     },
     beforeDestroy: function () {
     },
     computed: {
+      ...mapGetters([
+        'loggedIn',
+        'loggedOut',
+        'user'
+      ]),
       isValidUserName: function () {
-        return this.username.match(/^[0-9a-zA-Z]{6,10}$/)
+        return this.username.match(/^[0-9a-zA-Z]{6,30}$/)
       },
       isValidPassword: function () {
         return this.password.match(/[0-9]/) && this.password.match(/[a-zA-Z]/) && this.password.length >= 6
       },
-      loggedIn: function () {
-        return this.$store.getters.loggedIn
-      },
-      loggedOut: function () {
-        return this.$store.state.loggedOut
-      },
-      user: function () {
-        return this.$store.state.user
-      },
-      actionNotice: function () {
+      failureTip: function () {
         if (this.loggedOut) {
-          if (this.lastAction === 'login') {
+          if (this.action === 'login') {
             return '登录失败'
-          } else if (this.lastAction === 'register') {
+          } else if (this.action === 'register') {
             return '注册失败'
           }
         } else {

@@ -56,6 +56,7 @@
   import DateUtils from '../utils/date'
   import moment from 'moment'
   import DateNav from './DateNav.vue'
+  import types from '../store/types'
 
   export default {
     name: 'Cal',
@@ -105,7 +106,7 @@
       },
       locate: function (d) {
         if (d.unix() * 1000 < Date.now()) {
-          this.$store.commit('selectDate', d.unix() * 1000)
+          this.$store.commit(types.MUT_SELECT_DATE, d.unix() * 1000)
           this.$router.push('/daily')
         }
       }

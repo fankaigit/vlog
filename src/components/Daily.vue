@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     section#header.hero.is-info.is-small
-      p.title {{DateUtils.formatDate($store.state.startOfDate)}}
+      p.title {{DateUtils.formatDate(startOfDate)}}
 
     section#daily-date-nav
       date-nav(:data="navData")
@@ -43,6 +43,8 @@
   import log from '../utils/log'
   import Record from './Record.vue'
   import DateNav from './DateNav.vue'
+  import types from '../store/types'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'Daily',
@@ -65,16 +67,16 @@
           key += 1
         }
         Vue.set(hrecords, key, 0)
-        this.$store.commit('saveRecord', {hid: hid, key: key, value: 0})
+        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: hid, key: key, value: 0})
       },
       delRecord: function (hid, key) {
-        this.$store.commit('delRecord', {hid: hid, key: key})
+        this.$store.dispatch(types.ACT_DEL_RECORD, {hid: hid, key: key})
       },
       selectPrevDate: function () {
-        this.$store.commit('selectPrevDate')
+        this.$store.commit(types.MUT_SELECT_PREVIOUS)
       },
       selectNextDate: function () {
-        this.$store.commit('selectNextDate')
+        this.$store.commit(types.MUT_SELECT_NEXT)
       },
       firstKey: function (hid) {
         let rs = this.records[hid]
@@ -90,7 +92,7 @@
       isChecked: function (hid) {
         let rs = this.records[hid]
         let k = this.firstKey(hid)
-        return rs && k && rs[k] > 0
+        return rs && k && rs[k]
       },
       toggle: function (hid) {
         if (!this.editable) {
@@ -101,7 +103,7 @@
           this.addRecord(hid)
         }
         let k = this.firstKey(hid)
-        this.$store.commit('saveRecord', {hid: hid, key: k, value: val})
+        this.$store.dispatch(types.ACT_SAVE_RECORD, {hid: hid, key: k, value: val})
       },
       toggleEdit: function () {
         this.allowEdit = !this.allowEdit
@@ -111,18 +113,20 @@
       }
     },
     created: function () {
-      this.$store.dispatch('init')
       for (let hid in this.habits) {
         if (!(hid in this.records) && !this.habits[hid].deleted) {
-          this.$store.commit('initHabitRecords', hid)
+          this.$store.commit(types.MUT_INIT_HABIT_RECORDS, hid)
         }
       }
     },
     computed: {
+      ...mapState({
+        startOfDate: state => state.daily.startOfDate
+      }),
       records: function () {
         let ret = {}
         let records = this.$store.state.data.records
-        let startOfDate = this.$store.state.startOfDate
+        let startOfDate = this.startOfDate
         let endOfDate = startOfDate + DateUtils.MILLIS_PER_DAY
         for (let hid in this.habits) {
           let vs = records[hid]
@@ -154,7 +158,7 @@
         return result
       },
       isCurrentDateToday: function () {
-        return DateUtils.startOfToday() === this.$store.state.startOfDate
+        return DateUtils.startOfToday() === this.startOfDate
       },
       editable: function () {
         return this.isCurrentDateToday || this.allowEdit
@@ -164,14 +168,14 @@
         return {
           goPrev: that.selectPrevDate,
           goNext: that.selectNextDate,
-          title: DateUtils.dayOfWeek(that.$store.state.startOfDate),
-          prev: DateUtils.dayOfWeek(DateUtils.prevDate(that.$store.state.startOfDate)),
-          next: DateUtils.dayOfWeek(DateUtils.nextDate(that.$store.state.startOfDate)),
+          title: DateUtils.dayOfWeek(that.startOfDate),
+          prev: DateUtils.dayOfWeek(DateUtils.prevDate(that.startOfDate)),
+          next: DateUtils.dayOfWeek(DateUtils.nextDate(that.startOfDate)),
           displayPrev: function () {
             return true
           },
           displayNext: function () {
-            return DateUtils.startOfToday() !== that.$store.state.startOfDate
+            return DateUtils.startOfToday() !== that.startOfDate
           }
         }
       }

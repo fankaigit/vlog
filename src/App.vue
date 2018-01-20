@@ -4,7 +4,7 @@
       <router-view/>
     </div>
 
-    <div v-if="$store.getters.debug">
+    <div v-if="$store.getters.isDebug">
       last updated: {{new Date($store.state.data.updatedTime)}}
     </div>
 
@@ -30,8 +30,12 @@
 </template>
 
 <script>
+  import types from './store/types'
   export default {
-    name: 'app'
+    name: 'app',
+    created: function () {
+      this.$store.dispatch(types.ACT_INIT)
+    }
   }
 </script>
 

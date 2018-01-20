@@ -12,7 +12,6 @@
 </template>
 
 <script>
-  import log from '../utils/log'
   import Calendar from './Calendar'
   import Chart from './Chart'
 
@@ -22,21 +21,10 @@
       cal: Calendar,
       chart: Chart
     },
-    data: function () {
-      return {
-        habit: undefined
+    computed: {
+      habit: function () {
+        return this.$store.state.data.habits[this.$route.params.hid]
       }
-    },
-    methods: {
-    },
-    created: function () {
-      this.$store.dispatch('init')
-      let hid = this.$route.params.hid
-      this.habit = this.$store.state.data.habits[hid]
-      log.info(this.habit.id)
-    },
-    beforeDestroy: function () {
-      log.info('destroy')
     }
   }
 </script>

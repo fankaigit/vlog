@@ -94,7 +94,6 @@
           data: ds.map(d => this.values[d.unix()]),
           backgroundColor: 'rgb(0, 209, 178)'
         }]
-        log.info('data:', datasets)
         return {
           labels: labels,
           datasets: datasets
@@ -119,10 +118,8 @@
       for (let k in records) {
         let t = parseInt(k)
         let dayKey = moment(t).startOf('day').unix()
-        log.info('ddd', records[t], typeof records[t])
         this.values[dayKey] = this.habit.type === 'number' ? records[t] : parseInt(records[t]) + 1
       }
-      log.info(JSON.stringify(this.checkStatus))
     }
   }
 </script>
