@@ -24,7 +24,6 @@ log.info(JSON.stringify(state))
 const mutations = {
   saveHabit: function (state, h) {
     Vue.set(state.data.habits, h.id, h)
-    state.data.updatedTime = Date.now()
     if (h.deleted === true) {
       let rs = state.data.records[h.id] || {}
       if (Object.keys(rs).length === 0) {
@@ -179,6 +178,7 @@ function checkLogin (context) {
 }
 
 function save (state) {
+  state.data.updatedTime = Date.now()
   saveLocal(state)
   saveRemote(state)
 }
