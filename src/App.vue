@@ -4,6 +4,10 @@
       <router-view/>
     </div>
 
+    <div v-if="$store.getters.debug">
+      last updated: {{new Date($store.state.data.updatedTime)}}
+    </div>
+
     <div id="nav" class="navbar is-fixed-bottom bd-notification">
       <div>
         <router-link to="/daily">

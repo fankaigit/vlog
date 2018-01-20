@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     section#header.hero.is-info.is-small
-      p.title {{ loggedIn ? '用户' : '登录/注册' }}
+      p.title(@click="debug()") {{ loggedIn ? '用户' : '登录/注册' }}
 
     section#user(v-if="loggedIn")
       h3.field 欢迎, {{user.username}}！
@@ -134,6 +134,9 @@
       },
       hashedPassword: function () {
         return shajs('sha256').update(this.password).digest('hex')
+      },
+      debug: function () {
+        this.$store.commit('debug')
       }
     },
     created: function () {

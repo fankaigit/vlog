@@ -16,7 +16,8 @@ const state = {
   inited: false,
   user: null,
   startOfDate: null,
-  loggedOut: true
+  loggedOut: true,
+  debug: 0
 }
 
 log.info(JSON.stringify(state))
@@ -74,6 +75,9 @@ const mutations = {
   selectDate: function (state, t) {
     state.startOfDate = t
     log.info('select', state.startOfDate)
+  },
+  debug: function (state) {
+    state.debug += 1
   }
 }
 
@@ -83,6 +87,9 @@ const getters = {
   },
   endOfDate: function (state) {
     return state.startOfDate + DateUtils.MILLIS_PER_DAY - 1000
+  },
+  debug: function (state) {
+    return state.debug === 5
   }
 }
 
