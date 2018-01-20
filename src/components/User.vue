@@ -28,15 +28,15 @@
         .notice
           p(v-if="password !== '' && !isValidPassword") 密码必须包含字母和数字，6-20个字符
 
-    section#register(v-if="!loggedIn && !login")
+    section#register(v-if="!loggedIn && !registered")
       .field
         .button.is-primary(@click="register()") 注册
-        .switch(@click="login=true") 直接登录
+        .switch(@click="login = true;lastAction = null") 直接登录
 
-    section#login(v-if="!loggedIn && login")
+    section#login(v-if="!loggedIn && registered")
       .field
         .button.is-success(@click="login()") 登录
-        .switch(@click="login=false") 我要注册
+        .switch(@click="login = false;lastAction = null") 我要注册
 
 
     section#notice(v-if="!loggedIn")
@@ -97,7 +97,7 @@
         username: '',
         password: '',
         lastAction: null,
-        login: true
+        registered: true
       }
     },
     methods: {
