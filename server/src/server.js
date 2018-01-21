@@ -5,9 +5,12 @@ const app = new Koa()
 // logger
 app.use(async (ctx, next) => {
   const start = Date.now()
-  await next()
-  const ms = Date.now() - start
-  log.info(`${ctx.method} ${ctx.url} - cost ${ms} ms`)
+  try {
+    await next()
+  } finally {
+    const ms = Date.now() - start
+    log.info(`${ctx.method} ${ctx.url} - cost ${ms} ms`)
+  }
 })
 
 // cors
@@ -25,7 +28,7 @@ app.use(koaBody({
 // auth
 const session = require('koa-session')
 app.keys = ['yet-to-set-a-better-secret']
-app.use(session({renew: true, maxAge: 'session'}, app))
+app.use(session({renew: true, maxAge: 8640000000}, app))
 
 const auth = require('./auth')
 app.use(auth.passport.initialize())

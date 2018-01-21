@@ -33,8 +33,12 @@ passport.use(new LocalStrategy(async function (username, password, done) {
 const Router = require('koa-router')
 const pub = new Router()
 pub.post('/s/logout', async (ctx) => {
-  await ctx.logout()
-  ctx.throw(401)
+  if (ctx.isAuthenticated()) {
+    ctx.logout()
+    ctx.redirect('/s/status')
+  } else {
+    ctx.throw(401)
+  }
 }).post('/s/login',
   passport.authenticate('local', {
     successRedirect: '/s/status',
