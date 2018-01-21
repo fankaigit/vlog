@@ -32,9 +32,9 @@ passport.use(new LocalStrategy(async function (username, password, done) {
 // auth router
 const Router = require('koa-router')
 const pub = new Router()
-pub.post('/s/logout', function (ctx) {
-  ctx.logout()
-  ctx.redirect('s/status')
+pub.post('/s/logout', async (ctx) => {
+  await ctx.logout()
+  ctx.throw(401)
 }).post('/s/login',
   passport.authenticate('local', {
     successRedirect: '/s/status',
@@ -71,13 +71,13 @@ async function guard (ctx, next) {
 }
 
 // password encrypt
-const bcrypt = require('bcrypt');
-function encrypt(input) {
-  return bcrypt.hashSync(input, 5); // salt 5 round
+const bcrypt = require('bcrypt')
+function encrypt (input) {
+  return bcrypt.hashSync(input, 5) // salt 5 round
 }
 
-function check(input, hash) {
-  return bcrypt.compareSync(input, hash);
+function check (input, hash) {
+  return bcrypt.compareSync(input, hash)
 }
 
 module.exports = {
