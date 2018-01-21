@@ -3,6 +3,7 @@ import types from '../types'
 import log from '../../utils/log'
 import axios from 'axios'
 import appConfig from '../../../conf'
+import router from '../../router/index'
 
 const state = {
   user: null,
@@ -61,12 +62,16 @@ const actions = {
     let user = localStorage.getItem('user')
     commit(types.MUT_USER, JSON.parse(user))
     log.info('loaded local user', user)
+  },
+  [types.ACT_LOGGED_OUT] ({commit, dispatch}) {
+    log.error('user is already logged out')
+    dispatch(types.ACT_LOGOUT, false)
+    router.push('/user')
   }
 }
 
 const getters = {
   loggedIn: function (state) {
-    log.info('loggedIn=', state.loggedIn)
     return state.loggedIn
   },
   loggedOut: function (state) {

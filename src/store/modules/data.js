@@ -65,7 +65,11 @@ const mutations = {
   }
 }
 
-const getters = {}
+const getters = {
+  updatedTime: function () {
+    return state.updatedTime
+  }
+}
 
 const actions = {
   [types.ACT_INIT] ({dispatch, commit, state}) {
@@ -108,24 +112,41 @@ const actions = {
   [types.ACT_SAVE_HABIT] ({dispatch, commit}, h) {
     log.info('save habit')
     commit(types.MUT_SAVE_HABIT, h)
-    dispatch(types.ACT_SAVE)
+    dispatch(types.ACT_SAVE_DATA)
   },
   [types.ACT_SAVE_RECORD] ({dispatch, commit}, record) {
     log.info('save record', record)
     commit(types.MUT_SAVE_RECORD, record)
-    dispatch(types.ACT_SAVE)
+    dispatch(types.ACT_SAVE_DATA)
   },
   [types.ACT_DEL_RECORD] ({dispatch, commit}, record) {
     log.info('del record')
     commit(types.MUT_DEL_RECORD, record)
-    dispatch(types.ACT_SAVE)
+    dispatch(types.ACT_SAVE_DATA)
   },
-  [types.ACT_SAVE] ({commit, rootState, getters}) {
+  [types.ACT_SAVE_DATA] ({commit, rootState, getters, dispatch}) {
     commit(types.MUT_SAVE)
     saveLocal(state)
     if (getters.loggedIn) {
-      saveRemote(state, rootState.user.user.uid)
+      dispatch(types.ACT_SAVE_DATA_REMOTE, rootState.user.user.uid)
     }
+  },
+  [types.ACT_SAVE_DATA_REMOTE] ({state, dispatch, commit}, uid) {
+    const url = `${appConfig.urls.data}/${uid}`
+    axios.post(url, state).then(
+      (response) => {
+        commit(types.MUT_DISCONNECTED, false)
+        log.info('saved to remote')
+      },
+      (err) => {
+        if (err.response && err.response.status === 401) {
+          dispatch(types.ACT_LOGGED_OUT)
+        } else {
+          commit(types.MUT_DISCONNECTED, true)
+          log.error('fail to saveRecord to remote, err=', err)
+        }
+      }
+    )
   }
 }
 
@@ -139,16 +160,4 @@ export default {
 function saveLocal (state) {
   localStorage.setItem('vlog', JSON.stringify(state))
   log.info('saved to local')
-}
-
-function saveRemote (state, uid) {
-  const url = `${appConfig.urls.data}/${uid}`
-  axios.post(url, state).then(
-    (response) => {
-      log.info('saved to remote')
-    },
-    (err) => {
-      log.error('fail to saveRecord to remote, err=', err)
-    }
-  )
 }

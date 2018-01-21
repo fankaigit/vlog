@@ -4,8 +4,9 @@ export default {
   ACT_DEL_RECORD: 'delRecord',
   ACT_SAVE_HABIT: 'saveHabit',
   ACT_SAVE_RECORD: 'saveRecord',
-  ACT_SAVE: 'save',
+  ACT_SAVE_DATA: 'save',
   ACT_LOAD_REMOTE: 'loadRemote',
+  ACT_SAVE_DATA_REMOTE: 'saveRemote',
   MUT_SAVE_HABIT: 'saveHabit',
   MUT_INIT_HABIT_RECORDS: 'initHabitRecords',
   MUT_SAVE_RECORD: 'saveRecord',
@@ -27,10 +28,13 @@ export default {
   MUT_LOGOUT: 'setLogout',
   MUT_LOGIN: 'setLogin',
   MUT_USER: 'setUser',
+  MUT_USER_STATUS: 'setUserStatus',
+  ACT_LOGGED_OUT: 'loggedOut',
 
   // shared
   ACT_INIT: 'init',
   MUT_INIT: 'init',
   ACT_LOAD_LOCAL: 'loadLocal',
+  MUT_DISCONNECTED: 'setDisconnected',
   MUT_DEBUG: 'debug'
 }

@@ -15,16 +15,24 @@ export default new Vuex.Store({
     daily: dailyModule
   },
   state: {
-    debug: 0
+    debug: 0,
+    disconnected: false
   },
   mutations: {
     [types.MUT_DEBUG] (state) {
       state.debug ++
+    },
+    [types.MUT_DISCONNECTED] (state, disconnected) {
+      state.disconnected = disconnected
     }
   },
   getters: {
     isDebug (state) {
       return state.debug === 5  // tap 5 times
+    },
+    isDisconnected (state) {
+      console.log('dis:', state.disconnected)
+      return state.disconnected
     }
   }
 })
