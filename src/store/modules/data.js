@@ -46,7 +46,7 @@ const mutations = {
       Vue.set(state, 'habits', source.habits || {})
       Vue.set(state, 'records', source.records || {})
       state.updatedTime = source.updatedTime
-      log.info('updated data:', JSON.stringify(state))
+      // log.info('updated data:', JSON.stringify(state))
     } else {
       log.info('skip update data')
     }
@@ -58,12 +58,10 @@ const mutations = {
     state.updatedTime = Date.now()
   },
   [types.MUT_CLEAR_DATA] (state) {
-    state = {
-      habits: {},
-      records: {},
-      updatedTime: -1,
-      inited: true
-    }
+    log.info('clear data')
+    state.records = {}
+    state.habits = {}
+    state.updatedTime = -1
   }
 }
 
@@ -105,7 +103,7 @@ const actions = {
         log.error(`fail to parse local data: ${data}`)
       }
     }
-    log.info('loaded local data', data)
+    log.info('loaded local data')
   },
   [types.ACT_SAVE_HABIT] ({dispatch, commit}, h) {
     log.info('save habit')
@@ -122,10 +120,10 @@ const actions = {
     commit(types.MUT_DEL_RECORD, record)
     dispatch(types.ACT_SAVE)
   },
-  [types.ACT_SAVE] ({commit, rootState}) {
+  [types.ACT_SAVE] ({commit, rootState, getters}) {
     commit(types.MUT_SAVE)
     saveLocal(state)
-    if (rootState.user.user) {
+    if (getters.loggedIn) {
       saveRemote(state, rootState.user.user.uid)
     }
   }
