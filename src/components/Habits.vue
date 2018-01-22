@@ -98,6 +98,7 @@
   #actions .button {
     display: block;
     margin: 2rem auto;
+    padding-top: 0.2rem;
     width: 90%;
   }
 
