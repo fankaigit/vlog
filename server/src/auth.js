@@ -67,6 +67,7 @@ pub.post('/s/logout', async (ctx) => {
 
 async function guard (ctx, next) {
   if (ctx.isAuthenticated()) {
+    log.info('user=', ctx.state.user)
     await next()
   } else {
     ctx.body = {success: false}

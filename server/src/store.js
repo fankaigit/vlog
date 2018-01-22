@@ -56,7 +56,8 @@ function dbrun (sql, data) {
 }
 
 module.exports = {
-  db: db,
-  dbget: dbget,
-  dbrun: dbrun
+  db,
+  dbget,
+  dbrun,
+  dball
 }

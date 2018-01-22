@@ -39,18 +39,56 @@ app.use(auth.guard)
 // response
 const fs = require('fs')
 const Router = require('koa-router')
+const templateStore = require('./templateStore')
 const router = new Router()
 router.get('/s/vlog/data/:id', async (ctx) => {
   try {
-    ctx.body = fs.readFileSync(`data/${ctx.params.id}`)
+    let uid = ctx.state.user.id
+    ctx.body = fs.readFileSync(`data/${uid}`)
   } catch (err) {
     log.error(err)
   }
 }).post('/s/vlog/data/:id', async (ctx) => {
   try {
+    let uid = ctx.state.user.id
     let content = JSON.stringify(ctx.request.body)
-    log.info(`${ctx.params.id} => ${content}`)
-    fs.writeFileSync(`data/${ctx.params.id}`, content)
+    // log.info(`${ctx.params.id} => ${content}`)
+    fs.writeFileSync(`data/${uid}`, content)
+    ctx.body = 'saved'
+  } catch (err) {
+    log.error(err)
+  }
+}).get('/s/vlog/templates', async (ctx) => {
+  try {
+    let res = await templateStore.getTemplates()
+    ctx.body = res
+  } catch (err) {
+    log.error(err)
+  }
+}).post('/s/vlog/templates', async (ctx) => {
+  try {
+    let uid = ctx.state.user.id
+    let content = JSON.stringify(ctx.request.body)
+    templateStore.addTemplate(uid, content)
+    ctx.body = 'saved'
+  } catch (err) {
+    log.error(err)
+  }
+}).put('/s/vlog/templates/:id', async (ctx) => {
+  try {
+    let id = ctx.params.id
+    let uid = ctx.state.user.id
+    let content = JSON.stringify(ctx.request.body)
+    templateStore.updateTemplate(id, uid, content)
+    ctx.body = 'saved'
+  } catch (err) {
+    log.error(err)
+  }
+}).delete('/s/vlog/templates/:id', async (ctx) => {
+  try {
+    let id = ctx.params.id
+    let uid = ctx.state.user.id
+    templateStore.deleteTemplate(id, uid)
     ctx.body = 'saved'
   } catch (err) {
     log.error(err)
