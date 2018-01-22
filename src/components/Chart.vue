@@ -2,30 +2,36 @@
   #bar-chart
     #bar-chart-date-nav
       date-nav(:data="navData")
-    bar#bar(:data="chartData", :options="chartOptions", :height="chartHeight()")
+    #bar
+      chartist(ratio="ct-major-second", type="Bar", :data="chartData",
+        :options="chartOptions")
 </template>
+
+<style lang="scss">
+  @import "../assets/main.scss";
+
+  #bar {
+    margin: 1rem 1rem 0 0;
+  }
+
+  .ct-series-a .ct-bar{
+    stroke: $primary;
+    stroke-width: 6px;
+  }
+
+</style>
 
 <script>
   import DateUtils from '../utils/date'
   import moment from 'moment'
   import log from '../utils/log'
-  import { Bar } from 'vue-chartjs'
   import Vue from 'vue'
+  import Chartist from 'vue-chartist'
   import DateNav from './DateNav.vue'
 
-  Vue.component('bar', {
-    extends: Bar,
-    props: ['data', 'options'],
-    mounted: function () {
-      this.renderChart(this.data, this.options)
-    },
-    watch: {
-      data: {
-        handler: function (newData) {
-          this.renderChart(newData, this.options)
-        }
-      }
-    }
+  Vue.use(Chartist, {
+    messageNoData: '没有数据',
+    classNoData: 'empty'
   })
 
   export default {
@@ -54,7 +60,7 @@
         return this.startOfMonth.format('YYYY年MM月')
       },
       chartHeight: function () {
-        return Math.max(100, Math.min(300, window.innerHeight - 200))
+        return Math.max(200, Math.min(300, window.innerHeight - 200))
       }
     },
     computed: {
@@ -69,34 +75,31 @@
       },
       chartOptions: function () {
         let h = this.habit
-        let ticks = {
-          min: 0,
-          max: h.type === 'number' ? h.max : h.values.length + 0.5,
-          stepSize: 1,
-          callback: function (label) {
-            return h.type === 'number' ? label : label === 0 ? '' : h.values[label - 1]
-          }
-        }
         return {
-          scales: {
-            yAxes: [{
-              ticks: ticks
-            }]
+          high: parseInt(h.max) + 1,
+          low: parseInt(h.min),
+          height: this.chartHeight() + 'px',
+          axisY: {
+            labelInterpolationFnc: function (value) {
+              let v = h.unit ? `${value}${h.unit}` : value
+              return h.type === 'number' ? v : h.values[value]
+            },
+            onlyInteger: true
+          },
+          axisX: {
+            labelInterpolationFnc: function (value, index) {
+              return index % 2 === 0 ? value : null
+            }
           }
         }
       },
       chartData: function () {
         let ds = this.dates
         const labels = ds.map(d => d.date())
-        const datasets = [{
-          label: this.habit.name + (this.habit.unit ? `(${this.habit.unit})` : ''),
-          yLabels: this.habit.values,
-          data: ds.map(d => this.values[d.unix()]),
-          backgroundColor: 'rgb(0, 209, 178)'
-        }]
+        const series = [ds.map(d => this.values[d.unix()] || 0)]
         return {
           labels: labels,
-          datasets: datasets
+          series: series
         }
       },
       navData: function () {

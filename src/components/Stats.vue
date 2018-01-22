@@ -23,7 +23,7 @@
     },
     computed: {
       habit: function () {
-        return this.$store.state.data.habits[this.$route.params.hid]
+        return this.$store.state.data.habits[this.$route.params.hid] || {}
       }
     }
   }
