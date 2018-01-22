@@ -10,24 +10,23 @@ Vue.use(Vuex)
 const state = {
   habits: {},
   records: {},
-  updatedTime: -1,
-  inited: false
+  updatedTime: -1
 }
 
 const mutations = {
   [types.MUT_SAVE_HABIT] (state, h) {
     Vue.set(state.habits, h.id, h)
-    if (h.deleted === true) {
-      let rs = state.records[h.id] || {}
-      if (Object.keys(rs).length === 0) {
-        log.info('clear habit', JSON.stringify(h))
-        delete state.habits[h.id]
-        delete state.records[h.id]
-      }
-    }
     if (!(h.id in state.records)) {
       Vue.set(state.records, h.id, {})
     }
+    // if (h.deleted) {
+    //   let rs = state.records[h.id] || {}
+    //   if (Object.keys(rs).length === 0) {
+    //     log.info('clear habit', JSON.stringify(h))
+    //     delete state.habits[h.id]
+    //     delete state.records[h.id]
+    //   }
+    // }
   },
   [types.MUT_SAVE_RECORD] (state, record) {
     Vue.set(state.records[record.hid], record.key, record.value)
@@ -35,26 +34,11 @@ const mutations = {
   [types.MUT_DEL_RECORD]: function (state, record) {
     Vue.delete(state.records[record.hid], record.key)
   },
-  [types.MUT_UPDATE] (state, source) {
-    if (source !== null && source.updatedTime > state.updatedTime) {
-      for (let h in source.records) {
-        for (let k in source.records[h]) {
-          source.records[h][k] = source.records[h][k]
-        }
-      }
-
-      Vue.set(state, 'habits', source.habits || {})
-      Vue.set(state, 'records', source.records || {})
-      state.updatedTime = source.updatedTime
-      // log.info('updated data:', JSON.stringify(state))
-    } else {
-      log.info('skip update data')
-    }
+  [types.MUT_UPDATE_DATA] (state, source) {
+    Vue.set(state, 'habits', source.habits || {})
+    Vue.set(state, 'records', source.records || {})
   },
-  [types.MUT_INIT]: function (state) {
-    state.inited = true
-  },
-  [types.MUT_SAVE] (state) {
+  [types.MUT_UPDATE_TS] (state) {
     state.updatedTime = Date.now()
   },
   [types.MUT_CLEAR_DATA] (state) {
@@ -62,53 +46,20 @@ const mutations = {
     state.records = {}
     state.habits = {}
     state.updatedTime = -1
+    localStorage.clear()
   }
 }
 
-const getters = {
-  updatedTime: function () {
-    return state.updatedTime
+function handleError (err, {dispatch, commit}) {
+  if (err.response && err.response.status === 401) {
+    dispatch(types.ACT_LOGGED_OUT)
+  } else {
+    commit(types.MUT_DISCONNECTED, true)
+    log.error('fail to saveRecord to remote, err=', err)
   }
 }
 
 const actions = {
-  [types.ACT_INIT] ({dispatch, commit, state}) {
-    if (!state.inited) {
-      log.info('init data')
-      commit(types.MUT_INIT)
-      dispatch(types.ACT_LOAD_LOCAL).then(() => dispatch(types.ACT_CHECK_STATUS))
-    } else {
-      log.info('skip init data')
-    }
-  },
-  [types.ACT_LOAD_REMOTE] ({commit, state, rootState}) {
-    const url = `${appConfig.urls.data}/${rootState.user.user.uid}`
-    axios.get(url).then(
-      (response) => {
-        log.info('get remote, updatedTime = ', response.data.updatedTime)
-        if (response.data.updatedTime > state.updatedTime) {
-          log.info('use remote data')
-          commit(types.MUT_UPDATE, response.data)
-          saveLocal(state)
-        }
-      },
-      (err) => {
-        log.error('fail to get data from server, err=', err)
-      }
-    )
-  },
-  [types.ACT_LOAD_LOCAL] ({commit, dispatch}) {
-    let data = localStorage.getItem('vlog')
-    if (data) {
-      try {
-        let local = JSON.parse(data)
-        commit(types.MUT_UPDATE, local)
-      } catch (e) {
-        log.error(`fail to parse local data: ${data}`)
-      }
-    }
-    log.info('loaded local data')
-  },
   [types.ACT_SAVE_HABIT] ({dispatch, commit}, h) {
     log.info('save habit')
     commit(types.MUT_SAVE_HABIT, h)
@@ -124,36 +75,54 @@ const actions = {
     commit(types.MUT_DEL_RECORD, record)
     dispatch(types.ACT_SAVE_DATA)
   },
+  [types.ACT_LOAD_REMOTE] ({commit, state, getters}) {
+    const url = `${appConfig.urls.data}/${getters.user.uid}`
+    axios.get(url).then(
+      (res) => {
+        log.info('get remote, updatedTime = ', res.data.updatedTime)
+        commit(types.MUT_UPDATE_DATA, res.data)
+      },
+      (err) => handleError(err)
+    )
+  },
+  [types.ACT_LOAD_LOCAL] ({commit, dispatch}) {
+    let data = localStorage.getItem('vlog')
+    if (data) {
+      try {
+        let local = JSON.parse(data)
+        commit(types.MUT_UPDATE_DATA, local)
+      } catch (e) {
+        log.error(`fail to parse local data: ${data}`)
+      }
+    }
+    log.info('loaded local data')
+  },
   [types.ACT_SAVE_DATA] ({commit, rootState, getters, dispatch}) {
-    commit(types.MUT_SAVE)
-    saveLocal(state)
+    commit(types.MUT_UPDATE_TS)
     if (getters.loggedIn) {
-      dispatch(types.ACT_SAVE_DATA_REMOTE, rootState.user.user.uid)
+      dispatch(types.ACT_SAVE_DATA_REMOTE)
+    } else {
+      saveLocal(state)
     }
   },
-  [types.ACT_SAVE_DATA_REMOTE] ({state, dispatch, commit}, uid) {
-    const url = `${appConfig.urls.data}/${uid}`
+  [types.ACT_SAVE_DATA_REMOTE] ({commit, rootState, getters, dispatch}) {
+    const url = `${appConfig.urls.data}/${getters.user.uid}`
     axios.post(url, state).then(
-      (response) => {
+      (res) => {
         commit(types.MUT_DISCONNECTED, false)
-        log.info('saved to remote')
+        log.info(`saved to remote`)
       },
-      (err) => {
-        if (err.response && err.response.status === 401) {
-          dispatch(types.ACT_LOGGED_OUT)
-        } else {
-          commit(types.MUT_DISCONNECTED, true)
-          log.error('fail to saveRecord to remote, err=', err)
-        }
-      }
+      (err) => handleError(err, {dispatch, commit})
     )
+  },
+  [types.ACT_CLEAR_LOCAL_DATA] () {
+    localStorage.clear()
   }
 }
 
 export default {
   state,
   mutations,
-  getters,
   actions
 }
 

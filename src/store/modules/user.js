@@ -4,107 +4,100 @@ import log from '../../utils/log'
 import axios from 'axios'
 import appConfig from '../../../conf'
 import router from '../../router/index'
+import Status from '../userStatus'
 
 const state = {
   user: null,
-  loggedOut: true,
-  loggedIn: false
+  status: Status.LOGGED_OUT
 }
 
 const mutations = {
-  [types.MUT_LOGOUT] (state, loggedOut) {
-    state.loggedOut = loggedOut
-  },
-  [types.MUT_LOGIN] (state, loggedIn) {
-    state.loggedIn = loggedIn
+  [types.MUT_USER_STATUS] (state, status) {
+    state.status = status
   },
   [types.MUT_USER] (state, user) {
     state.user = user
   }
 }
 
+function logError (err) {
+  if (err.response && err.response.status === 401) {
+    log.error('fail to auth')
+  } else {
+    log.error('fail to connect to server:', err)
+  }
+}
+
 const actions = {
-  [types.ACT_REGISTER] (context, data) {
+  [types.ACT_REGISTER] ({commit, dispatch, state}, data) {
+    console.assert(state.status === Status.LOGGED_OUT)
     log.info('register')
-    context.commit(types.MUT_LOGOUT, false)
+    commit(types.MUT_USER_STATUS, Status.REGISTERING)
     axios.post(appConfig.urls.register, data).then(
-      (response) => onLoggedIn(context, response),
-      (err) => onNotLoggedIn(context, err)
+      (res) => dispatch(types.ACT_LOGGED_IN, res.data),
+      (err) => {
+        commit(types.MUT_USER_STATUS, Status.LOGGED_OUT)
+        logError(err)
+      }
     )
   },
-  [types.ACT_LOGIN] (context, data) {
+  [types.ACT_LOGIN] ({commit, dispatch}, data) {
+    console.assert(state.status === Status.LOGGED_OUT)
     log.info('login')
-    context.commit(types.MUT_LOGOUT, false)
+    commit(types.MUT_USER_STATUS, Status.LOGGING_IN)
     axios.post(appConfig.urls.login, data).then(
-      (response) => onLoggedIn(context, response),
-      (err) => onNotLoggedIn(context, err)
+      (res) => dispatch(types.ACT_LOGGED_IN, res.data),
+      (err) => {
+        commit(types.MUT_USER_STATUS, Status.LOGGED_OUT)
+        logError(err)
+      }
     )
   },
-  [types.ACT_LOGOUT] (context) {
+  [types.ACT_LOGOUT] ({commit, dispatch, getters}) {
+    console.assert(state.status === Status.LOGGED_IN)
     log.info('logout')
-    localStorage.setItem('user', null)
-    context.commit(types.MUT_CLEAR_DATA)
-    context.commit(types.MUT_USER, null)
-    axios.post(appConfig.urls.logout).then(
-      (response) => {
-        log.info('fail to logged out:', response.data)
-      },
-      (err) => onNotLoggedIn(context, err)
-    )
+    dispatch(types.ACT_LOGGED_OUT)
+    axios.post(appConfig.urls.logout)
   },
-  [types.ACT_CHECK_STATUS] (context) {
+  [types.ACT_INIT_CHECK] ({commit, dispatch, getters}) {
     axios.get(appConfig.urls.status).then(
-      (response) => onLoggedIn(context, response),
-      (err) => onNotLoggedIn(context, err)
+      (res) => dispatch(types.ACT_LOGGED_IN, res.data),
+      (err) => {
+        logError(err)
+        dispatch(types.ACT_LOAD_LOCAL)
+      }
     )
-  },
-  [types.ACT_LOAD_LOCAL] ({commit, dispatch}) {
-    let user = localStorage.getItem('user')
-    commit(types.MUT_USER, JSON.parse(user))
-    log.info('loaded local user', user)
   },
   [types.ACT_LOGGED_OUT] ({commit, dispatch}) {
-    log.error('user is already logged out')
-    dispatch(types.ACT_LOGOUT, false)
+    log.info('logged out, clear user and data')
+    commit(types.MUT_USER_STATUS, Status.LOGGED_OUT)
+    commit(types.MUT_USER, null)
+    commit(types.MUT_CLEAR_DATA)
     router.push('/user')
+  },
+  [types.ACT_LOGGED_IN] ({commit, dispatch, state}, user) {
+    let newUser = (state.status === Status.REGISTERING)
+    commit(types.MUT_USER_STATUS, Status.LOGGED_IN)
+    commit(types.MUT_USER, user)
+    if (newUser) {
+      log.info(`registered as ${user}`)
+      dispatch(types.ACT_SAVE_DATA_REMOTE)
+    } else {
+      log.info(`logged in as ${user}`)
+      dispatch(types.ACT_LOAD_REMOTE)
+    }
   }
 }
 
 const getters = {
   loggedIn: function (state) {
-    return state.loggedIn
+    return state.status === Status.LOGGED_IN
   },
   loggedOut: function (state) {
-    return state.loggedOut
+    return state.status === Status.LOGGED_OUT
   },
   user: function (state) {
     return state.user
-  }
-}
-
-function onLoggedIn (context, response) {
-  log.info('logged in as ', response.data)
-  let u = response.data
-  log.info(JSON.stringify(context.state.user))
-  log.info(JSON.stringify(u))
-
-  if (context.state.user && u.uid !== context.state.user.uid) {
-    log.info('clear data for prev user:', context.state.user)
-    context.commit(types.MUT_CLEAR_DATA)
-  }
-  context.commit(types.MUT_USER, response.data)
-  context.commit(types.MUT_LOGIN, true)
-  localStorage.setItem('user', JSON.stringify(response.data))
-  context.dispatch(types.ACT_LOAD_REMOTE, false)
-}
-
-function onNotLoggedIn (context, err) {
-  if (err.response && err.response.status === 401) {
-    log.info('logged out')
-    context.commit(types.MUT_LOGIN, false)
-    context.commit(types.MUT_LOGOUT, true)
-  } else {
-    log.error('fail to connect to server:', err)
   }
 }
 

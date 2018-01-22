@@ -122,8 +122,8 @@
         let tmp = hs[a].order
         hs[a].order = hs[b].order
         hs[b].order = tmp
-        this.$store.commit(types.MUT_SAVE_HABIT, hs[a])
-        this.$store.commit(types.MUT_SAVE_HABIT, hs[b])
+        this.$store.dispatch(types.ACT_SAVE_HABIT, hs[a])
+        this.$store.dispatch(types.ACT_SAVE_HABIT, hs[b])
       },
       moveUp: function (idx) {
         this.swap(idx - 1, idx)

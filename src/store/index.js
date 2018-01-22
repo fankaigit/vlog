@@ -5,6 +5,7 @@ import types from '../store/types'
 import userModule from './modules/user'
 import dataModule from './modules/data'
 import dailyModule from './modules/daily'
+import log from '../utils/log'
 
 Vue.use(Vuex)
 
@@ -33,6 +34,13 @@ export default new Vuex.Store({
     isDisconnected (state) {
       console.log('dis:', state.disconnected)
       return state.disconnected
+    }
+  },
+  actions: {
+    [types.ACT_INIT] ({dispatch, commit, state}) {
+      log.info('init')
+      commit(types.MUT_INIT)
+      dispatch(types.ACT_INIT_CHECK)
     }
   }
 })
