@@ -33,11 +33,11 @@
         </div>
         <div class="columns is-mobile">
           <div class="column is-3">
-            <input class="input is-warning" type="text" v-model="habit.min" placeholder="min"/>
+            <input class="input is-warning" type="number" v-model.number="habit.min" placeholder="min"/>
           </div>
           <div class="column is-2" style="text-align:center;margin-top: 0.4em">-</div>
           <div class="column is-3">
-            <input class="input is-warning" type="text" v-model="habit.max" placeholder="max"/>
+            <input class="input is-warning" type="number" v-model.number="habit.max" placeholder="max"/>
           </div>
           <div class="column is-1"></div>
           <div class="column is-3">
