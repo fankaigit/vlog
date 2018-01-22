@@ -26,7 +26,7 @@ const mutations = {
       }
     }
     if (!(h.id in state.records)) {
-      state.records[h.id] = {}
+      Vue.set(state.records, h.id, {})
     }
   },
   [types.MUT_SAVE_RECORD] (state, record) {
