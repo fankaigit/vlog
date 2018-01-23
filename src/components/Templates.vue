@@ -9,14 +9,17 @@
         p 还没有发布过日程~
       .template(v-for="template in templates", v-if="user !== null && template.uid === user.uid")
         .name {{template.content.name}}
-        .del
-          i.fa.fa-minus-circle(@click="delTemplate(template)") 删除
+        .del(@click="delTemplate(template)")
+          .button.is-danger.is-fullwidth  删除
 
       .notification 所有日程
       .template(v-for="template in templates")
         .name {{template.content.name}}
         .use(@click="useTemplate(template)")
-          i.fa.fa-check-circle  使用
+          .button.is-warning.is-fullwidth  应用
+
+      .txt
+        i 应用一个日程会把所有活动添加到你的日程里
     section#actions
       router-link.button.is-primary(:to="'/habits'") 回到我的日程
 
@@ -33,6 +36,7 @@
       line-height: 2.5rem;
 
       .del {
+        text-align: center;
         flex: 0 0 4rem;
         color: tomato;
       }
@@ -42,7 +46,6 @@
       }
 
       .use {
-        color: seagreen;
         flex: 0 0 4rem;
       }
     }
