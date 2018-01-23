@@ -7,6 +7,14 @@
       date-nav(:data="navData")
 
     section#records
+      .notice(v-if="Object.keys(records).length === 0")
+        span 你的日程还是空的，先去
+        =" "
+        router-link(:to="`/habits`")
+          i.fa.fa-list
+          i 我的日程页面
+        =" "
+        span 定制日程吧!
       .habit(v-for="(values, hid) in records" v-show="editable || Object.keys(values).length > 0")
         .habit-name
           i.fa.fa-calendar-check-o(v-if="habits[hid].type === 'check'")
@@ -153,6 +161,7 @@
 </script>
 
 <style lang="scss" scoped="">
+  @import "../assets/main.scss";
 
   /* somehow *{...} doesn't apply here */
   .columns, .column, .columns:last-child {
@@ -187,6 +196,14 @@
     margin: 0.5rem auto 0;
     border-collapse: separate;
     border-spacing: 0 0.3rem;
+
+    .notice {
+      margin: 1rem 1rem 0;
+      font-size: 0.9rem;
+      i{
+        color: $primary;
+      }
+    }
 
     .habit {
       display: table-row;
@@ -246,4 +263,5 @@
   .fa-plus-circle {
     color: gray;
   }
+
 </style>
