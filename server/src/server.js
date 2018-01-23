@@ -25,6 +25,19 @@ app.use(koaBody({
   jsonLimit: '1mb'
 }))
 
+// public zone
+const Router = require('koa-router')
+const nonSecured = new Router()
+nonSecured.get('/s/vlog/templates', async (ctx) => {
+  try {
+    let res = await templateStore.getTemplates()
+    ctx.body = res
+  } catch (err) {
+    log.error(err)
+  }
+})
+app.use(nonSecured.routes())
+
 // auth
 const session = require('koa-session')
 app.keys = ['yet-to-set-a-better-secret']
@@ -38,10 +51,9 @@ app.use(auth.guard)
 
 // response
 const fs = require('fs')
-const Router = require('koa-router')
 const templateStore = require('./templateStore')
-const router = new Router()
-router.get('/s/vlog/data/:id', async (ctx) => {
+const secured = new Router()
+secured.get('/s/vlog/data/:id', async (ctx) => {
   try {
     let uid = ctx.state.user.id
     ctx.body = fs.readFileSync(`data/${uid}`)
@@ -55,13 +67,6 @@ router.get('/s/vlog/data/:id', async (ctx) => {
     // log.info(`${ctx.params.id} => ${content}`)
     fs.writeFileSync(`data/${uid}`, content)
     ctx.body = 'saved'
-  } catch (err) {
-    log.error(err)
-  }
-}).get('/s/vlog/templates', async (ctx) => {
-  try {
-    let res = await templateStore.getTemplates()
-    ctx.body = res
   } catch (err) {
     log.error(err)
   }
@@ -94,7 +99,7 @@ router.get('/s/vlog/data/:id', async (ctx) => {
     log.error(err)
   }
 })
-app.use(router.routes())
+app.use(secured.routes())
 
 // server
 const http = require('http')

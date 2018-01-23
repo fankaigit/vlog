@@ -117,6 +117,15 @@ const actions = {
   },
   [types.ACT_CLEAR_LOCAL_DATA] () {
     localStorage.clear()
+  },
+  [types.ACT_PUBLISH_TEMPLATE] ({commit, dispatch}, content) {
+    const url = `${appConfig.urls.template}`
+    axios.post(url, content).then(
+      (res) => {
+        log.info(`published`)
+      },
+      (err) => handleError(err, {dispatch, commit})
+    )
   }
 }
 

@@ -1,9 +1,12 @@
 <template lang="pug">
   div
     section#header.hero.is-info.is-small
-      p.title 我的活动
+      p.title 我的日程
 
     section#habits
+      .notice(v-if="Object.keys(habits).length === 0")
+        p 你还没有任何活动，从可用日程中挑一个日程或者自己新建一个活动吧。
+
       .habit(v-for="(h, idx) in habits")
         .habit-name
           span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'check'")
@@ -31,6 +34,17 @@
 
     section#actions
       router-link.button.is-primary(:to="'/habits/-1'") 新建一个活动
+      .columns.is-mobile
+        .column
+          router-link.button.is-info(:to="'/templates'") 浏览可用日程
+        .column(v-if="loggedIn")
+          .button.is-warning(@click="publishTemplate") 发布我的日程
+      .txt(v-if="loggedIn")
+        p 日程发布后可以供所有人来浏览和使用
+        p 你可以随时删除自己发布的日程
+
+    b-modal(:active.sync="publishing", has-modal-card)
+      modal-form(:habits="habits", :publishing="publishing")
 
 </template>
 
@@ -95,21 +109,47 @@
     }
   }
 
-  #actions .button {
-    display: block;
-    margin: 2rem auto;
-    padding-top: 0.2rem;
-    width: 90%;
+  .notice {
+    font-size: 0.9rem;
   }
+
+  #actions {
+
+    .columns {
+      margin: 0;
+    }
+
+    .button {
+      display: block;
+      margin: 1rem 1rem 0;
+      padding-top: 0.3rem;
+    }
+
+    .txt {
+      margin: 1rem 1rem 0;
+      font-size: 0.9rem;
+    }
+  }
+
 
 </style>
 
 <script>
   import log from '../utils/log'
   import types from '../store/types'
+  import { mapGetters } from 'vuex'
+  import ModalForm from './ModalForm'
 
   export default {
+    components: {
+      ModalForm
+    },
     name: 'Habits',
+    data: function () {
+      return {
+        publishing: false
+      }
+    },
     methods: {
       select: function (h) {
         log.info(`select ${h.id} ${h.name}`)
@@ -131,11 +171,19 @@
       },
       moveDown: function (idx) {
         this.swap(idx, idx + 1)
+      },
+      publishTemplate: function () {
+        this.publishing = true
       }
     },
     created: function () {
     },
     computed: {
+      ...mapGetters([
+        'loggedIn',
+        'loggedOut',
+        'user'
+      ]),
       habits: function () {
         let hs = this.$store.state.data.habits
         let keys = Object.keys(hs)
@@ -146,7 +194,6 @@
             result.push(hs[key])
           }
         }
-//        log.info('recalculate habits - result', JSON.stringify(result))
         return result
       }
     }

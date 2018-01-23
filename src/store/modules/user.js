@@ -80,10 +80,10 @@ const actions = {
     commit(types.MUT_USER_STATUS, Status.LOGGED_IN)
     commit(types.MUT_USER, user)
     if (newUser) {
-      log.info(`registered as ${user}`)
+      log.info(`registered as`, JSON.stringify(user))
       dispatch(types.ACT_SAVE_DATA_REMOTE)
     } else {
-      log.info(`logged in as ${user}`)
+      log.info(`logged in as`, JSON.stringify(user))
       dispatch(types.ACT_LOAD_REMOTE)
     }
   }

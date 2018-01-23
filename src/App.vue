@@ -63,7 +63,6 @@
 
   *, :last-child, :first-child {
     margin: 0px;
-    border-width: 0px;
     padding: 0px;
   }
 

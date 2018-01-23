@@ -31,12 +31,12 @@
     section#register(v-if="!loggedIn && !registered")
       .field
         .button.is-primary(@click="register()") 注册
-        .switch(@click="switchRegistered(true)") 直接登录
+        .switch-action(@click="switchRegistered(true)") 直接登录
 
     section#login(v-if="!loggedIn && registered")
       .field
         .button.is-success(@click="login()") 登录
-        .switch(@click="switchRegistered(false)") 我要注册
+        .switch-action(@click="switchRegistered(false)") 我要注册
 
     section#notice(v-if="!loggedIn")
       .field
@@ -77,7 +77,7 @@
     padding-left: 0.4em;
   }
 
-  .switch {
+  .switch-action {
     width: 100%;
     text-align: center;
     font-size: 90%;

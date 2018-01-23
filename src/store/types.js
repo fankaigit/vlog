@@ -15,6 +15,7 @@ export default {
   MUT_UPDATE_TS: 'save',
   MUT_CLEAR_DATA: 'clear',
   ACT_CLEAR_LOCAL_DATA: 'clearLocalData',
+  ACT_PUBLISH_TEMPLATE: 'publishTemplate',
 
   // daily
   MUT_SELECT_PREVIOUS: 'selectPrevDate',
