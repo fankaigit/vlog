@@ -43,8 +43,7 @@
         p 日程发布后可以供所有人来浏览和使用
         p 你可以随时删除自己发布的日程
 
-    b-modal(:active.sync="publishing", has-modal-card)
-      modal-form(:habits="habits", :publishing="publishing")
+    template-dialog(:active.sync="publishing", :habits="habits")
 
 </template>
 
@@ -138,11 +137,11 @@
   import log from '../utils/log'
   import types from '../store/types'
   import { mapGetters } from 'vuex'
-  import ModalForm from './ModalForm'
+  import TemplateDialog from './TemplateDialog'
 
   export default {
     components: {
-      ModalForm
+      TemplateDialog
     },
     name: 'Habits',
     data: function () {
