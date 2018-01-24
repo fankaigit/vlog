@@ -131,7 +131,10 @@
       useTemplate (template) {
         for (let h of template.content.habits) {
           log.info(template)
-          this.$store.dispatch(types.ACT_SAVE_HABIT, h)
+          if (!(h.id in this.$store.state.data.habits)) {
+            h.order = Object.keys(this.$store.state.data.habits).length
+            this.$store.dispatch(types.ACT_SAVE_HABIT, h)
+          }
         }
         this.$router.push('/habits')
       },
