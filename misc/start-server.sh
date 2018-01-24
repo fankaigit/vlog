@@ -5,4 +5,4 @@
 
 killall node
 
-nohup node server/src/server.js >>data/log 2>&1 &!
+nohup node server/src/server.js >>/var/log/vlog 2>&1 &!
