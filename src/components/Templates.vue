@@ -8,15 +8,33 @@
       .txt(v-if="!published")
         p 还没有发布过日程~
       .template(v-for="template in templates", v-if="user !== null && template.uid === user.uid")
-        .name {{template.content.name}}
-        .del(@click="delTemplate(template)")
-          .button.is-danger.is-fullwidth  删除
+        .template-desc
+          .name {{template.content.name}}
+          .del(@click="delTemplate(template)")
+            .button.is-danger.is-fullwidth  删除
 
       .notification 所有日程
       .template(v-for="template in templates")
-        .name {{template.content.name}}
-        .use(@click="useTemplate(template)")
-          .button.is-warning.is-fullwidth  应用
+        .template-desc(@click="toggle(template)")
+          .name {{template.content.name}}
+          .toggle
+            i.fa.fa-angle-double-up(v-if="selected[template.id] || false")
+            i.fa.fa-angle-double-down(v-else)
+          .use(@click="useTemplate(template)")
+            .button.is-warning.is-fullwidth  应用
+        .habit(v-for="h in template.content.habits", v-if="selected[template.id] || false")
+          .habit-name
+            span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'check'")
+              i.fa.fa-square-o.fa-stack-2x
+              i.fa.fa-check.fa-stack-1x
+            span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'number'")
+              i.fa.fa-square-o.fa-stack-2x
+              i.fa.fa-stack-1x 3
+            span.habit-icon.fa-stack.fa-lg(v-if="h.type === 'custom'")
+              i.fa.fa-square-o.fa-stack-2x
+              i.fa.fa-star.fa-stack-1x
+            =" "
+            span {{h.name}}
 
       .txt
         i 应用一个日程会把所有活动添加到你的日程里
@@ -31,22 +49,24 @@
     .template {
       margin: 0.5rem 1rem 0;
       border-bottom: 1px solid lightblue;
-      display: flex;
-      height: 2.5rem;
-      line-height: 2.5rem;
 
-      .del {
-        text-align: center;
+      .template-desc {
+        height: 2.5rem;
+        line-height: 2.5rem;
+        display: flex;
+      }
+
+      .del, .use {
         flex: 0 0 4rem;
-        color: tomato;
+      }
+
+      .toggle {
+        flex: 0 0 4rem;
+        text-align: center;
       }
 
       .name {
         flex: 1;
-      }
-
-      .use {
-        flex: 0 0 4rem;
       }
     }
 
@@ -62,16 +82,31 @@
     }
   }
 
-  #actions .button {
-    display: block;
-    margin: 2rem auto;
-    padding-top: 0.3rem;
-    width: 90%;
+  .habit {
+    margin-left: 3rem;
+
+    .habit-name {
+      width: 45%;
+    }
+
+    .habit-icon {
+      font-size: 50%;
+      margin-bottom: 0.05rem;
+      color: sandybrown;
+      text-align: right;
+    }
   }
 
   .txt {
     margin: 1rem 1rem 0;
     font-size: 0.9rem;
+  }
+
+  #actions .button {
+    display: block;
+    margin: 2rem auto;
+    padding-top: 0.3rem;
+    width: 90%;
   }
 
 </style>
@@ -88,7 +123,8 @@
     name: 'Habits',
     data: function () {
       return {
-        templates: {}
+        templates: {},
+        selected: {}
       }
     },
     methods: {
@@ -111,6 +147,10 @@
             log.error('fail to delete template', err)
           }
         )
+      },
+      toggle (template) {
+        let val = this.selected[template.id] || false
+        Vue.set(this.selected, template.id, !val)
       }
     },
     created: function () {
